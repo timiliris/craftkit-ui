@@ -10,19 +10,32 @@
 
 <!-- ============================== BARRE DU HAUT ============================== -->
 <header class="mc-bg-list sticky top-0 z-30">
-  <div class="flex flex-wrap items-center gap-3 px-4 py-2">
-    <span class="mc-sprite" data-sprite="block-grass-block-side-tinted" data-zoom="2" aria-hidden="true"></span>
-    <a href="#accueil" class="text-2xl text-mc-yellow no-underline">CraftKit UI</a>
-    <span class="hidden text-muted-foreground sm:inline">Minecraft CSS Theme · v0.1.0</span>
-    <div class="ml-auto flex flex-wrap gap-2">
-      <button id="mode" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Mode: Classic</button>
-      <button id="lang" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" aria-label="Language / Langue">EN | FR</button>
-      <button id="scale" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Scale: 2</button>
+  <div class="flex items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4">
+    <span class="mc-sprite sm:hidden" data-sprite="block-grass-block-side-tinted" aria-hidden="true"></span>
+    <span class="mc-sprite hidden sm:inline-block" data-sprite="block-grass-block-side-tinted" data-zoom="2" aria-hidden="true"></span>
+    <div class="flex min-w-0 flex-col">
+      <a href="#accueil" class="text-xl leading-none text-mc-yellow no-underline sm:text-2xl">CraftKit UI</a>
+      <span id="current" class="truncate text-xs text-muted-foreground lg:hidden" aria-live="polite"></span>
     </div>
+    <span class="hidden text-muted-foreground xl:inline">Minecraft CSS Theme · v0.1.0</span>
+    <div class="ml-auto hidden flex-wrap gap-2 lg:flex">
+      <button data-action="mode" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Mode: Classic</button>
+      <button data-action="lang" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" aria-label="Language / Langue">EN | FR</button>
+      <button data-action="scale" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Scale: 2</button>
+    </div>
+    <button id="menu-toggle" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs ml-auto shrink-0 lg:hidden" aria-expanded="false" aria-controls="menu">Menu</button>
   </div>
   <div class="mc-separator"></div>
-  <!-- navigation mobile -->
-  <nav class="flex gap-1 overflow-x-auto px-2 py-1 lg:hidden" id="nav-mobile" aria-label="Sections"></nav>
+  <!-- mobile menu: settings + sections -->
+  <div id="menu" hidden class="mc-bg-menu max-h-[calc(100dvh-24*var(--mc-px))] overflow-y-auto overscroll-contain lg:hidden">
+    <div class="flex flex-wrap gap-2 p-3">
+      <button data-action="mode" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Mode: Classic</button>
+      <button data-action="lang" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" aria-label="Language / Langue">EN | FR</button>
+      <button data-action="scale" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Scale: 2</button>
+    </div>
+    <div class="mc-separator"></div>
+    <nav id="nav-mobile" aria-label="Sections" class="grid grid-cols-2 gap-0.5 p-2"></nav>
+  </div>
 </header>
 
 <div class="flex">
@@ -33,10 +46,12 @@
   <main class="flex min-w-0 flex-1 flex-col gap-12 px-4 py-6 md:px-8">
 
 <!-- ============================== 1. ACCUEIL ============================== -->
-<section id="accueil" data-title="Title screen" class="relative flex flex-col items-center gap-3 py-6">
-  <p class="text-5xl text-white sm:text-7xl">CraftKit UI</p>
-  <p class="text-muted-foreground">Minecraft's GUI for any website. 63 utilities, 613 sprites, 2 modes, 27 animations.</p>
-  <span class="mc-splash absolute right-[8%] top-8 text-base">Also in pixels!</span>
+<section id="accueil" data-title="Title screen" class="flex flex-col items-center gap-3 pt-6 pb-2">
+  <div class="relative pb-7 sm:pb-5">
+    <p class="text-4xl text-white min-[400px]:text-5xl sm:text-7xl">CraftKit UI</p>
+    <span class="mc-splash absolute -right-2 bottom-1 text-xs sm:-right-6 sm:text-base">Also in pixels!</span>
+  </div>
+  <p class="text-center text-muted-foreground">Minecraft's GUI for any website. 63 utilities, 613 sprites, 2 modes, 27 animations.</p>
   <div class="mt-4 flex w-full max-w-[calc(200*var(--mc-px))] flex-col gap-2">
     <a href="#boutons" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted w-full pt-1 pb-1.5 text-center text-xs no-underline">Singleplayer</a>
     <a href="#listes" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted w-full pt-1 pb-1.5 text-center text-xs no-underline">Multiplayer</a>
@@ -48,7 +63,7 @@
       <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex size-10 items-center justify-center" aria-label="Accessibility"><span class="mc-sprite" data-sprite="icon-accessibility"></span></button>
     </div>
   </div>
-  <div class="absolute inset-x-0 bottom-0 flex flex-wrap justify-between gap-x-4 text-xs">
+  <div class="mt-6 flex w-full flex-wrap justify-between gap-x-4 gap-y-1 text-xs">
     <p>Minecraft 26.2 (CraftKit UI)</p>
     <p>Unofficial theme. Do not distribute!</p>
   </div>
@@ -62,24 +77,24 @@
     <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
       <p class="font-medium text-mc-yellow">1. Tailwind v4 project (shadcn/ui, Vite, Next.js...)</p>
       <p>Copies the theme into your project and adds the imports after @import "tailwindcss".</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-app --tailwind --patch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>node tools/install.mjs ../my-app --tailwind --patch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
       <p class="text-xs text-muted-foreground">Without --patch it prints the lines to add. Delete shadcn's default :root and .dark color blocks: they override the theme's tokens.</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>@import &quot;tailwindcss&quot;;
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>@import &quot;tailwindcss&quot;;
 @import &quot;./craftkit-ui/minecraft.css&quot;;
-@import &quot;./craftkit-ui/animations.css&quot;;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+@import &quot;./craftkit-ui/animations.css&quot;;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
     </div>
     <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
       <p class="font-medium text-mc-yellow">2. Any other site (HTML, PHP, a CMS...)</p>
       <p>Compiles one stylesheet with only the classes your pages use.</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-site --css</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-site --css --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>node tools/install.mjs ../my-site --css</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>node tools/install.mjs ../my-site --css --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
       <p class="text-xs text-muted-foreground">Then link it from every page. Run it again after adding classes, or keep --watch running. Write class names in full in your code.</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;craftkit-ui.css&quot;&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;craftkit-ui.css&quot;&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
     </div>
     <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3 xl:col-span-2">
       <p class="font-medium text-mc-yellow">3. Use it</p>
       <p>Every section below shows a component with the classes to copy. The basics:</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>&lt;html lang=&quot;en&quot;&gt;              &lt;!-- class=&quot;dark&quot; = Modern mode --&gt;
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>&lt;html lang=&quot;en&quot;&gt;              &lt;!-- class=&quot;dark&quot; = Modern mode --&gt;
 &lt;body&gt;                        &lt;!-- page background and font come from the theme --&gt;
   &lt;div class=&quot;mc-panel mx-auto flex max-w-md flex-col gap-2 p-2&quot;&gt;
     &lt;p class=&quot;font-medium&quot;&gt;Options&lt;/p&gt;
@@ -88,7 +103,7 @@
     &lt;span class=&quot;mc-bar mc-anim-fill max-w-full&quot; style=&quot;--mc-bar-value:.6&quot;&gt;&lt;/span&gt;
     &lt;span class=&quot;mc-sprite mc-anim-bob [--mc-sprite:var(--mc-item-diamond)]&quot; role=&quot;img&quot; aria-label=&quot;Diamond&quot;&gt;&lt;/span&gt;
   &lt;/div&gt;
-&lt;/body&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+&lt;/body&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
       <ul class="flex list-none flex-col gap-1 p-0 text-xs text-muted-foreground">
         <li>Sizes are game pixels: 1 spacing unit = 2 GUI px (h-10 = 20 px, a button). mc-scale-3 makes a block bigger.</li>
         <li>Always pair a base with its states: hover: / focus-visible: / disabled: + the -highlighted or -disabled utility.</li>
@@ -99,17 +114,17 @@
     <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
       <p class="font-medium text-mc-yellow">4. With Claude Code</p>
       <p>CraftKit UI is also a Claude Code plugin: its craftkit-ui skill knows the install steps and every class.</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>/plugin marketplace add timiliris/craftkit-ui
-/plugin install craftkit-ui@craftkit-ui</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>/plugin marketplace add timiliris/craftkit-ui
+/plugin install craftkit-ui@craftkit-ui</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
       <p class="text-xs text-muted-foreground">Then ask "add the Minecraft theme" in any project. If you move the folder, set CRAFTKIT_HOME to its new path.</p>
     </div>
     <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
       <p class="font-medium text-mc-yellow">5. Work on CraftKit UI itself</p>
       <p>Rebuild the stylesheet, run this demo, or regenerate the textures and the font from your Minecraft (1.21.6 or newer).</p>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node build.mjs --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node serve.mjs</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
-      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>npm install
-npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>node build.mjs --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>node serve.mjs</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
+      <div class="flex flex-col gap-2 sm:flex-row sm:items-start"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-all p-2 text-xs leading-[1.375] sm:whitespace-pre sm:break-normal"><code>npm install
+npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-end px-3 pt-1 pb-1.5 text-xs sm:self-start">Copy</button></div>
     </div>
   </div>
 </section>
@@ -757,11 +772,11 @@ npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hov
 <section id="dashboard" data-title="Dashboard patterns" class="flex flex-col gap-6">
   <h2 class="text-3xl">Dashboard patterns</h2>
   <p class="text-muted-foreground">The Kaizen skin's patterns (stat cards, tables, badges, alerts, charts) rebuilt with the generic utilities.</p>
-  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Players online</p><p class="text-4xl">128</p><p class="text-mc-green text-xs">▲ +12 since yesterday</p></div>
-    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">TPS</p><p class="text-4xl">19.8</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-green-background)] [--mc-bar-fill:var(--mc-boss-bar-green-progress)]" style="--mc-bar-value:0.99"></span></div>
-    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Memory</p><p class="text-4xl">6.2 GB</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-yellow-background)] [--mc-bar-fill:var(--mc-boss-bar-yellow-progress)]" style="--mc-bar-value:0.72"></span></div>
-    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Errors</p><p class="text-4xl text-destructive">3</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-red-background)] [--mc-bar-fill:var(--mc-boss-bar-red-progress)]" style="--mc-bar-value:0.15"></span></div>
+  <div class="grid grid-cols-2 gap-2 sm:gap-4 xl:grid-cols-4">
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Players online</p><p class="text-2xl sm:text-4xl">128</p><p class="text-mc-green text-xs">▲ +12 since yesterday</p></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">TPS</p><p class="text-2xl sm:text-4xl">19.8</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-green-background)] [--mc-bar-fill:var(--mc-boss-bar-green-progress)]" style="--mc-bar-value:0.99"></span></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Memory</p><p class="text-2xl sm:text-4xl">6.2 GB</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-yellow-background)] [--mc-bar-fill:var(--mc-boss-bar-yellow-progress)]" style="--mc-bar-value:0.72"></span></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Errors</p><p class="text-2xl text-destructive sm:text-4xl">3</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-red-background)] [--mc-bar-fill:var(--mc-boss-bar-red-progress)]" style="--mc-bar-value:0.15"></span></div>
   </div>
 
   <div class="grid grid-cols-1 gap-6 xl:grid-cols-[2fr_1fr]">
@@ -837,6 +852,7 @@ npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hov
   <div class="flex flex-col gap-2">
     <h3 class="text-lg">Every block (mc-tile)</h3>
     <div class="grid grid-cols-[repeat(auto-fill,minmax(calc(40*var(--mc-px)),1fr))] gap-1" id="blocks"></div>
+    <button id="blocks-more" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted self-center px-4 pt-1 pb-1.5 text-xs" hidden></button>
   </div>
 </section>
 
@@ -849,7 +865,8 @@ npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hov
     <div class="flex flex-wrap gap-1" id="sprite-families"></div>
     <span class="text-muted-foreground" id="sprite-count"></span>
   </div>
-  <div class="grid grid-cols-[repeat(auto-fill,minmax(calc(56*var(--mc-px)),1fr))] gap-1" id="sprite-grid"></div>
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(calc(48*var(--mc-px)),1fr))] gap-1 sm:grid-cols-[repeat(auto-fill,minmax(calc(56*var(--mc-px)),1fr))]" id="sprite-grid"></div>
+  <button id="sprite-more" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted self-center px-4 pt-1 pb-1.5 text-xs" hidden></button>
 </section>
 
 <!-- ============================== 13. UTILITAIRES ============================== -->
@@ -857,7 +874,7 @@ npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hov
   <h2 class="text-3xl">Utility reference</h2>
   <div class="mc-panel-dark overflow-x-auto p-3">
     <table class="w-full border-collapse text-left">
-      <thead><tr class="border-b"><th class="p-1 font-medium text-muted-foreground">Class</th><th class="p-1 font-medium text-muted-foreground">Purpose</th></tr></thead>
+      <thead class="hidden sm:table-header-group"><tr class="border-b"><th class="p-1 font-medium text-muted-foreground">Class</th><th class="p-1 font-medium text-muted-foreground">Purpose</th></tr></thead>
       <tbody id="utils"></tbody>
     </table>
   </div>

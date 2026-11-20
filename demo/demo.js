@@ -43,7 +43,7 @@ function setLang(lang) {
   try { localStorage.setItem("craftkit-lang", lang) } catch {}
   document.documentElement.lang = lang
   translate(); renderers.forEach((r) => r())
-  $("#lang").replaceChildren(h("span", lang === "en" ? "text-mc-yellow" : "text-muted-foreground", "EN"), document.createTextNode(" | "), h("span", lang === "fr" ? "text-mc-yellow" : "text-muted-foreground", "FR"))
+  for (const btn of $$("[data-action=lang]")) btn.replaceChildren(h("span", lang === "en" ? "text-mc-yellow" : "text-muted-foreground", "EN"), document.createTextNode(" | "), h("span", lang === "fr" ? "text-mc-yellow" : "text-muted-foreground", "FR"))
 }
 // A text that JS renders itself: re-rendered on language change, skipped by translate().
 function live(el, fn) { el.dataset.noi18n = "1"; const r = () => { el.textContent = fn() }; renderers.push(r); r(); return r }
@@ -124,12 +124,24 @@ for (const b of $$(".copy-code")) b.addEventListener("click", () => copy(b.previ
 // ---------------------------------------------------------------- navigation
 {
   const secs = $$("main section[id]")
-  const boxes = [[$("#nav"), "navlink px-2 py-1 text-xs no-underline hover:bg-accent"], [$("#nav-mobile"), "navlink shrink-0 whitespace-nowrap px-2 py-0.5 text-xs no-underline hover:bg-accent"]]
+  const boxes = [[$("#nav"), "navlink px-2 py-1 text-xs no-underline hover:bg-accent"], [$("#nav-mobile"), "navlink px-2 py-1.5 text-sm no-underline hover:bg-accent"]]
   for (const [box, cls] of boxes) for (const s of secs) { const a = h("a", cls, s.dataset.title); a.href = `#${s.id}`; box.append(a) }
+  // Mobile: one "Menu" button opens the settings and the section list; the header shows the current section.
+  const menu = $("#menu"), toggle = $("#menu-toggle")
+  const renderToggle = live(toggle, () => t(menu.hidden ? "Menu" : "Close"))
+  const setMenu = (open) => { menu.hidden = !open; toggle.setAttribute("aria-expanded", String(open)); renderToggle() }
+  toggle.addEventListener("click", () => setMenu(menu.hidden))
+  for (const a of $$("a", menu)) a.addEventListener("click", () => setMenu(false))
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !menu.hidden) { setMenu(false); toggle.focus() } })
+  let current = secs[0]
+  const renderCurrent = live($("#current"), () => t(current.dataset.title))
   const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) for (const a of $$(".navlink")) {
-      const on = a.getAttribute("href") === `#${e.target.id}`
-      a.classList.toggle("bg-primary", on); a.classList.toggle("text-primary-foreground", on)
+    for (const e of entries) if (e.isIntersecting) {
+      current = e.target; renderCurrent()
+      for (const a of $$(".navlink")) {
+        const on = a.getAttribute("href") === `#${e.target.id}`
+        a.classList.toggle("bg-primary", on); a.classList.toggle("text-primary-foreground", on)
+      }
     }
   }, { rootMargin: "-30% 0px -60% 0px" })
   secs.forEach((s) => io.observe(s))
@@ -137,17 +149,17 @@ for (const b of $$(".copy-code")) b.addEventListener("click", () => copy(b.previ
 
 // ---------------------------------------------------------------- mode, scale, language, motion
 {
-  const btn = $("#mode")
-  live(btn, () => `${t("Mode")}${sep()}${document.documentElement.classList.contains("dark") ? "Modern" : "Classic"}`)
-  btn.addEventListener("click", () => { document.documentElement.classList.toggle("dark"); renderers.forEach((r) => r()) })
+  for (const btn of $$("[data-action=mode]")) {
+    live(btn, () => `${t("Mode")}${sep()}${document.documentElement.classList.contains("dark") ? "Modern" : "Classic"}`)
+    btn.addEventListener("click", () => { document.documentElement.classList.toggle("dark"); renderers.forEach((r) => r()) })
+  }
 }
 {
   const SCALES = ["mc-scale-2", "mc-scale-3", "mc-scale-4"]; let i = 0
-  const btn = $("#scale"), render = live(btn, () => `${t("Scale")}${sep()}${i + 2}`)
-  btn.addEventListener("click", () => { document.body.classList.remove(SCALES[i]); i = (i + 1) % SCALES.length; document.body.classList.add(SCALES[i]); render() })
+  const btns = $$("[data-action=scale]"), renders = btns.map((btn) => live(btn, () => `${t("Scale")}${sep()}${i + 2}`))
+  for (const btn of btns) btn.addEventListener("click", () => { document.body.classList.remove(SCALES[i]); i = (i + 1) % SCALES.length; document.body.classList.add(SCALES[i]); renders.forEach((r) => r()) })
 }
-$("#lang").dataset.noi18n = "1"
-$("#lang").addEventListener("click", () => setLang(LANG === "en" ? "fr" : "en"))
+for (const btn of $$("[data-action=lang]")) { btn.dataset.noi18n = "1"; btn.addEventListener("click", () => setLang(LANG === "en" ? "fr" : "en")) }
 {
   let paused = false
   const btn = $("#pause-all"), render = live(btn, () => t(paused ? "Play all" : "Pause all"))
@@ -469,6 +481,16 @@ for (const name of Object.keys(SPR).filter((n) => n.startsWith("block-") && !n.i
   $("#blocks").append(b)
 }
 {
+  // Long lists stay short on phones: the first BLOCKS_SHOWN tiles, then a button.
+  const BLOCKS_SHOWN = 32, tiles = $$("#blocks > *"), more = $("#blocks-more")
+  if (tiles.length > BLOCKS_SHOWN) {
+    tiles.slice(BLOCKS_SHOWN).forEach((b) => { b.hidden = true })
+    more.hidden = false
+    live(more, () => `${t("Show all blocks")} (${tiles.length})`)
+    more.addEventListener("click", () => { tiles.forEach((b) => { b.hidden = false }); more.hidden = true })
+  }
+}
+{
   const FAMILIES = [["All", ""], ["Items", "item-"], ["Blocks", "block-"], ["HUD", "hud-"], ["Widgets", "widget-"], ["Containers", "container-"], ["Advancements", "advancements-"], ["Boss", "boss-bar-"], ["Icons", "icon-"], ["Toasts", "toast-"], ["Recipes", "recipe-book-"], ["Lists", "server-list-|world-list-|transferable-list-|player-list-"], ["Stats", "statistics-|spectator-"], ["GUI", "gui-|popup-|tooltip|panel-|notification-|pause-menu-|dialog-"]]
   const grid = $("#sprite-grid"), q = $("#sprite-q"); let fam = ""
   grid.dataset.noi18n = "1"
@@ -485,13 +507,18 @@ for (const name of Object.keys(SPR).filter((n) => n.startsWith("block-") && !n.i
     b.addEventListener("click", () => copy(`mc-sprite [--mc-sprite:var(--mc-${n})] [--mc-sprite-w:${w}] [--mc-sprite-h:${hh}]`))
     grid.append(b); return b
   })
-  const count = $("#sprite-count"); let shown = 0
+  // Shown PAGE at a time: the full library is 576 cells, far too long on a phone.
+  const PAGE = 60, count = $("#sprite-count"), more = $("#sprite-more"); let shown = 0, limit = PAGE, matches = []
   const renderCount = live(count, () => `${shown} sprites`)
+  const renderMore = live(more, () => `${t("Show more")} (${Math.max(0, shown - limit)})`)
+  const paint = () => { matches.forEach((c, i) => { c.hidden = i >= limit }); more.hidden = shown <= limit; renderMore() }
   const filter = () => {
-    const term = q.value.trim().toLowerCase(), re = fam ? new RegExp(`^(${fam})`) : null; shown = 0
-    for (const c of cells) { const ok = (!re || re.test(c.dataset.name)) && c.dataset.name.includes(term); c.hidden = !ok; if (ok) shown++ }
-    renderCount()
+    const term = q.value.trim().toLowerCase(), re = fam ? new RegExp(`^(${fam})`) : null
+    matches = []
+    for (const c of cells) { const ok = (!re || re.test(c.dataset.name)) && c.dataset.name.includes(term); c.hidden = true; if (ok) matches.push(c) }
+    shown = matches.length; limit = PAGE; renderCount(); paint()
   }
+  more.addEventListener("click", () => { limit += PAGE * 2; paint() })
   for (const [lbl, pre] of FAMILIES) {
     const chip = h("button", "fam mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-2 pt-0.5 pb-1 text-xs", lbl)
     chip.addEventListener("click", () => { fam = pre; $$(".fam").forEach((c) => c.classList.toggle("mc-tint-green", c === chip)); filter() })
@@ -544,7 +571,7 @@ for (const [c, d] of [
   ["mc-anim-title / -chat / -item-name / -levelup", "CraftKit UI: /title, chat fade-out, hotbar item name, level up."],
   ["mc-anim-loading / -cursor", "CraftKit UI: three-square loader and blinking text cursor."],
   ["mc-anim-paused", "CraftKit UI: freezes every animation inside."],
-]) { const tr = h("tr", "border-b border-border"); const c1 = h("td", "p-1 align-top text-mc-yellow", c); c1.dataset.noi18n = "1"; tr.append(c1, h("td", "p-1", d)); $("#utils").append(tr) }
+]) { const tr = h("tr", "border-b border-border"); const c1 = h("td", "block p-1 pb-0 align-top text-mc-yellow sm:table-cell sm:pb-1", c); c1.dataset.noi18n = "1"; tr.append(c1, h("td", "block p-1 pt-0 sm:table-cell sm:pt-1", d)); $("#utils").append(tr) }
 
 hydrate()
 setLang(LANG)

@@ -425,5 +425,8 @@
  "■ Errors": "■ Erreurs",
  "■ Events": "■ Événements",
  "■ Survival": "■ Survie",
- "▲ +12 since yesterday": "▲ +12 depuis hier"
+ "▲ +12 since yesterday": "▲ +12 depuis hier",
+ "Show more": "Afficher plus",
+ "Show all blocks": "Afficher tous les blocs",
+ "GUI scale of a subtree: redeclares --mc-px and the font size.": "Échelle GUI d'un sous-arbre : redéclare --mc-px et la taille du texte."
 }
