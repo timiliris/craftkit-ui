@@ -200,12 +200,16 @@ The raw textures and the typed sprite table (`theme/.cache/minecraft-sprites.ts`
 every sprite, handy in TypeScript) go to `theme/.cache/`. The same jar gives byte-identical files.
 Then run `node build.mjs`.
 
-## License
+## Licensing & Minecraft assets
 
-The code is released under the [MIT License](LICENSE). It does not cover the Minecraft textures and
-font: they are © Mojang AB / Microsoft, are not distributed here, and stay subject to the
-[Minecraft usage guidelines](https://www.minecraft.net/usage-guidelines). Read them before publishing a
-site built with CraftKit UI. The online demo is built by GitHub Actions from the official client jar.
+CraftKit UI's code (CSS, scripts, tools, demo) is released under the [MIT License](LICENSE). This
+repository contains **no Mojang assets**: textures and the font are extracted locally by
+`npm run mc:setup` from *your own* copy of Minecraft: Java Edition. The MIT License does not cover these
+assets, which remain © Mojang AB / Microsoft. The hosted demo and README images are generated from the
+official client for illustration, in line with the
+[Minecraft Usage Guidelines](https://www.minecraft.net/usage-guidelines).
+
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 
 ---
 
@@ -342,9 +346,13 @@ dans les dossiers des launchers habituels (officiel, Modrinth, CurseForge, Prism
 la variable `MC_JAR`. Minecraft 1.21.6 ou plus. La table typée des sprites
 (`theme/.cache/minecraft-sprites.ts`) arrive dans `theme/.cache/`. Relance ensuite `node build.mjs`.
 
-### Licence
+### Licence et assets Minecraft
 
-Le code est sous [licence MIT](LICENSE). Elle ne couvre pas les textures et la police de Minecraft :
-elles sont © Mojang AB / Microsoft, ne sont pas distribuées ici et restent soumises aux
-[règles d'utilisation de Minecraft](https://www.minecraft.net/usage-guidelines). Lis-les avant de publier
-un site fait avec CraftKit UI. La démo en ligne est construite par GitHub Actions depuis le jar client officiel.
+Le code de CraftKit UI (CSS, scripts, outils, démo) est sous [licence MIT](LICENSE). Ce dépôt ne contient
+**aucun asset Mojang** : les textures et la police sont extraites localement par `npm run mc:setup` depuis
+*votre propre* copie de Minecraft: Java Edition. La licence MIT ne couvre pas ces assets, qui restent
+© Mojang AB / Microsoft. La démo en ligne et les images du README sont générées depuis le client officiel
+à titre d'illustration, conformément aux
+[Minecraft Usage Guidelines](https://www.minecraft.net/usage-guidelines).
+
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
