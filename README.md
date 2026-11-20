@@ -350,7 +350,7 @@ la variable `MC_JAR`. Minecraft 1.21.6 ou plus. La table typée des sprites
 
 Le code de CraftKit UI (CSS, scripts, outils, démo) est sous [licence MIT](LICENSE). Ce dépôt ne contient
 **aucun asset Mojang** : les textures et la police sont extraites localement par `npm run mc:setup` depuis
-*votre propre* copie de Minecraft: Java Edition. La licence MIT ne couvre pas ces assets, qui restent
+*ta propre* copie de Minecraft: Java Edition. La licence MIT ne couvre pas ces assets, qui restent
 © Mojang AB / Microsoft. La démo en ligne et les images du README sont générées depuis le client officiel
 à titre d'illustration, conformément aux
 [Minecraft Usage Guidelines](https://www.minecraft.net/usage-guidelines).
