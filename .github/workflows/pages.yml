@@ -46,6 +46,16 @@ jobs:
           sed -e 's#"/dist/#"./dist/#g' -e 's#"/demo/#"./demo/#g' demo/index.html > _site/index.html
           sed -i -e 's#"/demo/#"./demo/#g' _site/demo/demo.js
           touch _site/.nojekyll
+      - name: Capture the README screenshots and animations
+        # Published with the demo under /media/ (never committed: they show Minecraft textures).
+        continue-on-error: true
+        run: |
+          npm i --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+          command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+          node serve.mjs &
+          sleep 1
+          node tools/capture-media.mjs _site/media
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

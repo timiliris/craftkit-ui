@@ -10,6 +10,40 @@ A Minecraft GUI theme for the web (original project **minecraft-shadcn-theme v0.
 stone buttons, black text fields, bevelled panels, inventory slots, tabs, tooltips, toasts, XP and boss
 bars, block textures and the pixel font. CraftKit UI adds the game's animations on top.
 
+## Screenshots
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/desktop-classic.png" alt="Title screen, Classic mode" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/desktop-modern.png" alt="Title screen, Modern mode" width="49%">
+</p>
+
+### Components
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-inventory.png" alt="Inventory and containers" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-hud.png" alt="HUD" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-buttons.png" alt="Buttons" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-dashboard.png" alt="Dashboard" width="49%">
+</p>
+
+### Animations
+
+| | | |
+|:-:|:-:|:-:|
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-toasts.gif" alt="Toasts" width="260"><br>`mc-anim-toast-in / -out` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-title.gif" alt="/title" width="260"><br>`mc-anim-title / -chat / -item-name` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-progress.gif" alt="Progress" width="260"><br>`mc-anim-fill / -cook / -burn` |
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-health.gif" alt="Health" width="260"><br>`mc-anim-shake-row / -blink` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-items.gif" alt="Items" width="260"><br>`mc-anim-bob / -glint` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-loading.gif" alt="Loading" width="260"><br>`mc-anim-loading / -levelup` |
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-textures.gif" alt="Animated textures" width="260"><br>`mc-anim-water / -lava ...` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-sprites.gif" alt="Animated sprites" width="260"><br>`mc-anim-strip` | |
+
+### On a phone
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-title.png" alt="Title screen on a phone" width="30%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-menu.png" alt="Menu on a phone" width="30%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-inventory.png" alt="Inventory on a phone" width="30%">
+</p>
+
+Captured automatically from the [live demo](https://timiliris.github.io/craftkit-ui/) on every push.
+
 ## Setup
 
 Requirements: Node 20.11 or later and Minecraft: Java Edition 1.21.6 or later, launched at least once.
@@ -143,6 +177,9 @@ src/animations.css          CraftKit UI animation utilities (mc-anim-*)
 build.mjs                   compiles dist/craftkit-ui.css (scans demo/ or the folders passed as arguments)
 tools/sprite-index.mjs      writes demo/sprites.json (name and size of every sprite)
 tools/install.mjs           installs the theme into another project (see Install)
+tools/fetch-jar.mjs         CI only: downloads the official client jar for the demo build
+tools/capture-media.mjs     CI only: captures the README screenshots and GIFs from the demo
+.github/workflows/pages.yml builds the demo and the README media, deploys to GitHub Pages
 tools/skill-refs.mjs        writes the skill's reference files (run by build.mjs)
 plugin/                     Claude Code plugin: skills/craftkit-ui/SKILL.md + references/
 .claude-plugin/             makes this folder a Claude Code plugin marketplace
@@ -180,6 +217,40 @@ site built with CraftKit UI. The online demo is built by GitHub Actions from the
 Un thème web reprenant le GUI de Minecraft (projet d'origine **minecraft-shadcn-theme v0.1.0**). Il reproduit le GUI du jeu :
 boutons en pierre, champs noirs, panneaux biseautés, slots d'inventaire, onglets, tooltips, toasts,
 barres d'XP et de boss, textures de blocs et police pixel. CraftKit UI y ajoute les animations du jeu.
+
+### Captures
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/desktop-classic.png" alt="Écran titre, mode Classic" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/desktop-modern.png" alt="Écran titre, mode Modern" width="49%">
+</p>
+
+#### Composants
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-inventory.png" alt="Inventaire et conteneurs" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-hud.png" alt="HUD" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-buttons.png" alt="Boutons" width="49%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/section-dashboard.png" alt="Dashboard" width="49%">
+</p>
+
+#### Animations
+
+| | | |
+|:-:|:-:|:-:|
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-toasts.gif" alt="Toasts" width="260"><br>`mc-anim-toast-in / -out` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-title.gif" alt="/title" width="260"><br>`mc-anim-title / -chat / -item-name` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-progress.gif" alt="Progression" width="260"><br>`mc-anim-fill / -cook / -burn` |
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-health.gif" alt="Santé" width="260"><br>`mc-anim-shake-row / -blink` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-items.gif" alt="Objets" width="260"><br>`mc-anim-bob / -glint` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-loading.gif" alt="Chargement" width="260"><br>`mc-anim-loading / -levelup` |
+| <img src="https://timiliris.github.io/craftkit-ui/media/anim-textures.gif" alt="Textures animées" width="260"><br>`mc-anim-water / -lava ...` | <img src="https://timiliris.github.io/craftkit-ui/media/anim-sprites.gif" alt="Sprites animés" width="260"><br>`mc-anim-strip` | |
+
+#### Sur téléphone
+
+<p align="center">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-title.png" alt="Écran titre sur téléphone" width="30%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-menu.png" alt="Menu sur téléphone" width="30%">
+  <img src="https://timiliris.github.io/craftkit-ui/media/mobile-inventory.png" alt="Inventaire sur téléphone" width="30%">
+</p>
+
+Capturées automatiquement depuis la [démo en ligne](https://timiliris.github.io/craftkit-ui/) à chaque push.
 
 ### Mise en place
 
