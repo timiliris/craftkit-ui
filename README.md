@@ -6,7 +6,7 @@
 > MICROSOFT. This repository contains **no Minecraft asset**: the textures and the font are extracted on
 > your machine from your own copy of Minecraft: Java Edition (see [Setup](#setup)).
 
-A Minecraft GUI theme for the web (original project **minecraft-shadcn-theme v0.1.0**). It recreates the game's GUI:
+A Minecraft GUI theme for the web (based on the author's own **minecraft-shadcn-theme v0.1.0**, MIT like the rest). It recreates the game's GUI:
 stone buttons, black text fields, bevelled panels, inventory slots, tabs, tooltips, toasts, XP and boss
 bars, block textures and the pixel font. CraftKit UI adds the game's animations on top.
 
@@ -165,7 +165,7 @@ stepped on whole pixels and turned off by `prefers-reduced-motion`:
 ## Contents
 
 ```
-theme/                      the theme (vendored, do not edit)
+theme/                      the theme (synced from minecraft-shadcn-theme, same author)
   minecraft.css             Tailwind v4 source: shadcn tokens, @utility mc-*, base layer, full docs at the top
   minecraft-textures.css    ~630 game sprites as data: PNGs (--mc-block-*, --mc-item-*, --mc-hud-* ...)
   minecraft-derived.css     derived sprites (tiled buttons, slider)
@@ -202,7 +202,7 @@ Then run `node build.mjs`.
 
 ## Licensing & Minecraft assets
 
-CraftKit UI's code (CSS, scripts, tools, demo) is released under the [MIT License](LICENSE). This
+CraftKit UI's code (CSS including `theme/minecraft.css`, scripts, tools, demo) is released under the [MIT License](LICENSE). This
 repository contains **no Mojang assets**: textures and the font are extracted locally by
 `npm run mc:setup` from *your own* copy of Minecraft: Java Edition. The MIT License does not cover these
 assets, which remain © Mojang AB / Microsoft. The hosted demo and README images are generated from the
@@ -218,7 +218,7 @@ NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR 
 > Projet de fan non officiel. Ce dépôt ne contient **aucun asset Minecraft** : les textures et la police
 > sont extraites sur ta machine depuis ta propre copie de Minecraft: Java Edition. **[Démo en ligne](https://timiliris.github.io/craftkit-ui/)**.
 
-Un thème web reprenant le GUI de Minecraft (projet d'origine **minecraft-shadcn-theme v0.1.0**). Il reproduit le GUI du jeu :
+Un thème web reprenant le GUI de Minecraft (basé sur **minecraft-shadcn-theme v0.1.0**, du même auteur, sous MIT comme le reste). Il reproduit le GUI du jeu :
 boutons en pierre, champs noirs, panneaux biseautés, slots d'inventaire, onglets, tooltips, toasts,
 barres d'XP et de boss, textures de blocs et police pixel. CraftKit UI y ajoute les animations du jeu.
 
@@ -348,7 +348,7 @@ la variable `MC_JAR`. Minecraft 1.21.6 ou plus. La table typée des sprites
 
 ### Licence et assets Minecraft
 
-Le code de CraftKit UI (CSS, scripts, outils, démo) est sous [licence MIT](LICENSE). Ce dépôt ne contient
+Le code de CraftKit UI (CSS dont `theme/minecraft.css`, scripts, outils, démo) est sous [licence MIT](LICENSE). Ce dépôt ne contient
 **aucun asset Mojang** : les textures et la police sont extraites localement par `npm run mc:setup` depuis
 *ta propre* copie de Minecraft: Java Edition. La licence MIT ne couvre pas ces assets, qui restent
 © Mojang AB / Microsoft. La démo en ligne et les images du README sont générées depuis le client officiel

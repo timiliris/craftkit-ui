@@ -1,9 +1,8 @@
 /*
- * VENDORED, do not edit here. Origin: the "minecraft-shadcn-theme" project (version 0.1.0),
- * file src/styles/minecraft.css, copied verbatim below this comment. To update it, replace
- * everything after this comment with the new upstream file, then run `pnpm build`.
- * tools/web-skin/lib/compile.mjs adapts it in memory for the dashboard (token names, base rules,
- * font files); README.md lists those adaptations. Nothing in this file is changed on disk.
+ * CraftKit UI theme source. Origin: the author's own "minecraft-shadcn-theme" project (version 0.1.0,
+ * file src/styles/minecraft.css), written by Timiliris with Claude and released here under the MIT
+ * License with the rest of CraftKit UI (see LICENSE). Kept in sync with that project: change it
+ * there or update this whole file at once, then run `node build.mjs`.
  */
 /*
  * Minecraft GUI theme for shadcn/ui (Tailwind CSS v4). Unofficial fan theme, hand-written.
