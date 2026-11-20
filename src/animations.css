@@ -1,0 +1,255 @@
+/*
+ * CraftKit UI animations: the motion the game has, as Tailwind v4 utilities on top of theme/minecraft.css.
+ * The vendored theme only animates mc-splash; everything below is CraftKit UI's own layer.
+ *
+ * Rules kept from the theme: every movement lands on whole GUI pixels (steps() or round()), no
+ * blur, no easing on sprites, and prefers-reduced-motion stops everything (the theme's base layer
+ * already shortens animations to 0.01ms; the utilities here also set animation: none).
+ *
+ * TEXTURE STRIPS (animated textures are vertical strips of frames)
+ *   mc-anim-strip    a sprite box playing a strip. Hooks: --mc-anim-src (image), --mc-anim-frames,
+ *                    --mc-anim-duration (one loop), --mc-anim-w / --mc-anim-h (one frame, texture px),
+ *                    --mc-anim-zoom.
+ *   mc-anim-tile     the same as a repeating background (any box size). Hooks: --mc-anim-src,
+ *                    --mc-anim-frames, --mc-anim-duration, --mc-anim-size (one tile, a length).
+ *   Presets: mc-anim-water, mc-anim-lava, mc-anim-magma, mc-anim-sculk (tiles),
+ *            mc-anim-music-notes, mc-anim-trial, mc-anim-locator-up, mc-anim-locator-down (sprites).
+ *
+ * GAME EFFECTS
+ *   mc-anim-toast-in / mc-anim-toast-out   toast sliding in from / out to the right edge.
+ *   mc-anim-shake        low-health jiggle (hearts at 2 HP or less, food at 0 saturation).
+ *   mc-anim-shake-row    on a row of hearts/food: each child shakes out of phase.
+ *   mc-anim-blink        damage flash: the container blinks white twice.
+ *   mc-anim-bob          dropped-item float, 1 GUI px steps.
+ *   mc-anim-glint        enchantment glint: a purple sheen sweeping over the element (::after).
+ *   mc-anim-fill         plays an mc-bar from 0 to its --mc-bar-value (registered as a number).
+ *   mc-anim-burn         furnace flame: --mc-bar-value from 1 to 0, loops (use on a vertical mc-bar).
+ *   mc-anim-cook         furnace arrow: --mc-bar-value from 0 to 1, loops.
+ *   mc-anim-title        /title: fade in, stay, fade out (--mc-anim-duration, default 3.5s).
+ *   mc-anim-chat         chat line: visible 10s, then fades out in 1s like the game.
+ *   mc-anim-item-name    the item name above the hotbar: visible, then fades.
+ *   mc-anim-loading      three squares, the lit one stepping left to right (Kaizen portal).
+ *   mc-anim-cursor       blinking text cursor "_" of the game's text fields (::after).
+ *   mc-anim-levelup      the level number popping in green.
+ *   mc-anim-paused       on any ancestor: freezes every animation inside.
+ */
+
+/* --mc-bar-value becomes animatable. */
+@property --mc-bar-value { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+/* ----------------------------------------------------------------------------- strips */
+@utility mc-anim-strip {
+  --mc-anim-step: calc(var(--mc-anim-h, 16) * var(--mc-anim-zoom, 1) * var(--mc-px));
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+  width: calc(var(--mc-anim-w, 16) * var(--mc-anim-zoom, 1) * var(--mc-px));
+  height: var(--mc-anim-step);
+  background-image: var(--mc-anim-src);
+  background-size: 100% calc(var(--mc-anim-step) * var(--mc-anim-frames, 1));
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: mc-strip var(--mc-anim-duration, 1s) steps(var(--mc-anim-frames, 1)) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@utility mc-anim-tile {
+  --mc-anim-step: var(--mc-anim-size, calc(16 * var(--mc-px)));
+  background-image: var(--mc-anim-src);
+  background-size: var(--mc-anim-step) calc(var(--mc-anim-step) * var(--mc-anim-frames, 1));
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  animation: mc-strip var(--mc-anim-duration, 1s) steps(var(--mc-anim-frames, 1)) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-strip {
+  from { background-position-y: 0; }
+  to { background-position-y: calc(var(--mc-anim-step) * var(--mc-anim-frames, 1) * -1); }
+}
+
+@utility mc-anim-water {
+  @apply mc-anim-tile;
+  --mc-anim-src: var(--mc-block-water-strip);
+  --mc-anim-frames: var(--mc-block-water-strip-frames);
+  --mc-anim-duration: var(--mc-block-water-strip-duration);
+}
+@utility mc-anim-lava {
+  @apply mc-anim-tile;
+  --mc-anim-src: var(--mc-block-lava-strip);
+  --mc-anim-frames: var(--mc-block-lava-strip-frames);
+  --mc-anim-duration: var(--mc-block-lava-strip-duration);
+}
+/* magma: 3 frames x 8 ticks; sculk: 4 frames x 20 ticks (the game interpolates, here they step). */
+@utility mc-anim-magma {
+  @apply mc-anim-tile;
+  --mc-anim-src: var(--mc-block-magma);
+  --mc-anim-frames: 3;
+  --mc-anim-duration: 1200ms;
+}
+@utility mc-anim-sculk {
+  @apply mc-anim-tile;
+  --mc-anim-src: var(--mc-block-sculk);
+  --mc-anim-frames: 4;
+  --mc-anim-duration: 4000ms;
+}
+@utility mc-anim-music-notes {
+  @apply mc-anim-strip;
+  --mc-anim-src: var(--mc-icon-music-notes);
+  --mc-anim-frames: 8; --mc-anim-w: 16; --mc-anim-h: 16;
+  --mc-anim-duration: 800ms;
+}
+@utility mc-anim-trial {
+  @apply mc-anim-strip;
+  --mc-anim-src: var(--mc-icon-trial-available);
+  --mc-anim-frames: 6; --mc-anim-w: 8; --mc-anim-h: 8;
+  --mc-anim-duration: 300ms;
+}
+@utility mc-anim-locator-up {
+  @apply mc-anim-strip;
+  --mc-anim-src: var(--mc-hud-locator-bar-arrow-up);
+  --mc-anim-frames: 2; --mc-anim-w: 7; --mc-anim-h: 5;
+  --mc-anim-duration: 400ms;
+}
+@utility mc-anim-locator-down {
+  @apply mc-anim-strip;
+  --mc-anim-src: var(--mc-hud-locator-bar-arrow-down);
+  --mc-anim-frames: 2; --mc-anim-w: 7; --mc-anim-h: 5;
+  --mc-anim-duration: 400ms;
+}
+
+/* ----------------------------------------------------------------------------- game effects */
+@utility mc-anim-toast-in {
+  animation: mc-toast-in 250ms steps(8) both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@utility mc-anim-toast-out {
+  animation: mc-toast-out 250ms steps(8) both;
+  @media (prefers-reduced-motion: reduce) { animation: none; opacity: 0; }
+}
+@keyframes mc-toast-in { from { translate: 110% 0; } to { translate: 0 0; } }
+@keyframes mc-toast-out { from { translate: 0 0; } to { translate: 110% 0; } }
+
+/* The game moves each heart by -1..+1 GUI px every tick when health is low. */
+@utility mc-anim-shake {
+  animation: mc-shake 300ms steps(1) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-shake {
+  0% { translate: 0 0; }
+  20% { translate: 0 calc(-1 * var(--mc-px)); }
+  40% { translate: 0 var(--mc-px); }
+  60% { translate: 0 0; }
+  80% { translate: 0 calc(-1 * var(--mc-px)); }
+}
+/* Children shake out of phase, like the game's per-heart random offset. */
+@utility mc-anim-shake-row {
+  & > :nth-child(odd) { animation: mc-shake 300ms steps(1) infinite; }
+  & > :nth-child(even) { animation: mc-shake 300ms steps(1) -150ms infinite; }
+  & > :nth-child(3n) { animation: mc-shake 300ms steps(1) -75ms infinite; }
+  @media (prefers-reduced-motion: reduce) { & > * { animation: none !important; } }
+}
+@utility mc-anim-blink {
+  animation: mc-blink 600ms steps(1) 2;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-blink {
+  0%, 50% { filter: brightness(3); }
+  25%, 75% { filter: none; }
+}
+@utility mc-anim-bob {
+  animation: mc-bob 2.4s steps(1) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-bob {
+  0%, 100% { translate: 0 0; }
+  12% { translate: 0 calc(-1 * var(--mc-px)); }
+  25% { translate: 0 calc(-2 * var(--mc-px)); }
+  37% { translate: 0 calc(-3 * var(--mc-px)); }
+  50% { translate: 0 calc(-4 * var(--mc-px)); }
+  62% { translate: 0 calc(-3 * var(--mc-px)); }
+  75% { translate: 0 calc(-2 * var(--mc-px)); }
+  87% { translate: 0 calc(-1 * var(--mc-px)); }
+}
+@utility mc-anim-glint {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(115deg, transparent 30%, rgb(170 80 255 / 0.55) 45%, rgb(220 170 255 / 0.7) 50%, rgb(170 80 255 / 0.55) 55%, transparent 70%);
+    background-size: 300% 100%;
+    mix-blend-mode: screen;
+    -webkit-mask: var(--mc-glint-mask, none) center / 100% 100% no-repeat;
+    mask: var(--mc-glint-mask, none) center / 100% 100% no-repeat;
+    animation: mc-glint 3s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) { &::after { animation: none; background-position: 50% 0; } }
+}
+@keyframes mc-glint { from { background-position: 100% 0; } to { background-position: -50% 0; } }
+
+@utility mc-anim-fill {
+  animation: mc-fill 1.2s steps(24) both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-fill { from { --mc-bar-value: 0; } }
+@utility mc-anim-cook {
+  animation: mc-cook 2s steps(24) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; --mc-bar-value: 0.5; }
+}
+@keyframes mc-cook { from { --mc-bar-value: 0; } to { --mc-bar-value: 1; } }
+@utility mc-anim-burn {
+  animation: mc-burn 4s steps(14) infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; --mc-bar-value: 0.6; }
+}
+@keyframes mc-burn { from { --mc-bar-value: 1; } to { --mc-bar-value: 0; } }
+
+@utility mc-anim-title {
+  animation: mc-title var(--mc-anim-duration, 3.5s) linear both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-title { 0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+@utility mc-anim-chat {
+  animation: mc-chat 11s linear both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-chat { 0%, 91% { opacity: 1; } 100% { opacity: 0; } }
+@utility mc-anim-item-name {
+  animation: mc-item-name 2.5s linear both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-item-name { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+@utility mc-anim-levelup {
+  animation: mc-levelup 600ms steps(6) both;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-levelup {
+  0% { scale: 2; color: #FFFFFF; }
+  100% { scale: 1; }
+}
+
+@utility mc-anim-loading {
+  display: inline-block;
+  width: calc(4 * var(--mc-px));
+  height: calc(4 * var(--mc-px));
+  margin-inline: calc(8 * var(--mc-px));
+  background: var(--accent-foreground, #FFFFFF);
+  box-shadow: calc(-8 * var(--mc-px)) 0 0 #555555, calc(8 * var(--mc-px)) 0 0 #555555;
+  animation: mc-loading 1.2s step-end infinite;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes mc-loading {
+  0% { background-color: #555555; box-shadow: calc(-8 * var(--mc-px)) 0 0 #FFFFFF, calc(8 * var(--mc-px)) 0 0 #555555; }
+  33% { background-color: #FFFFFF; box-shadow: calc(-8 * var(--mc-px)) 0 0 #555555, calc(8 * var(--mc-px)) 0 0 #555555; }
+  66% { background-color: #555555; box-shadow: calc(-8 * var(--mc-px)) 0 0 #555555, calc(8 * var(--mc-px)) 0 0 #FFFFFF; }
+}
+@utility mc-anim-cursor {
+  &::after { content: "_"; animation: mc-cursor 600ms steps(1) infinite; }
+  @media (prefers-reduced-motion: reduce) { &::after { animation: none; } }
+}
+@keyframes mc-cursor { 50% { opacity: 0; } }
+
+@utility mc-anim-paused {
+  &, & * { animation-play-state: paused !important; }
+  & *::before, & *::after { animation-play-state: paused !important; }
+}

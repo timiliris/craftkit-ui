@@ -1,0 +1,61 @@
+# Builds the demo and publishes it to GitHub Pages.
+# The Minecraft textures and font are NOT in this repository: the job downloads the official
+# client jar from Mojang's servers, extracts the assets, builds dist/craftkit-ui.css and deploys
+# the demo. Nothing from the jar is committed.
+name: Demo (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  # Game version the theme is generated from. Bump it to follow a new release.
+  MC_VERSION: "26.2"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Fetch the Minecraft client jar
+        run: echo "MC_JAR=$(node tools/fetch-jar.mjs)" >> "$GITHUB_ENV"
+      - name: Extract textures and font
+        run: npm run mc:setup
+      - name: Build dist/craftkit-ui.css
+        run: npm run build
+      - name: Assemble the site
+        run: |
+          mkdir -p _site/demo _site/dist
+          cp demo/demo.js demo/i18n-fr.json demo/sprites.json _site/demo/
+          cp dist/craftkit-ui.css _site/dist/
+          # The demo uses root paths (/dist, /demo); Pages serves it under /<repo>/.
+          sed -e 's#"/dist/#"./dist/#g' -e 's#"/demo/#"./demo/#g' demo/index.html > _site/index.html
+          sed -i -e 's#"/demo/#"./demo/#g' _site/demo/demo.js
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

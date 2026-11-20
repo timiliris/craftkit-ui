@@ -1,0 +1,7 @@
+{
+  "name": "craftkit-ui",
+  "version": "0.1.0",
+  "description": "CraftKit UI: style web pages like Minecraft's GUI (Tailwind v4 / shadcn theme, 613 sprites, animations). Skill with install steps and the full class reference.",
+  "author": { "name": "Timiliris" },
+  "keywords": ["minecraft", "css", "tailwind", "shadcn", "theme"]
+}

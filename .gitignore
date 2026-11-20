@@ -1,0 +1,13 @@
+node_modules/
+
+# Mojang assets: generated from your own Minecraft jar by `npm run mc:setup`, never committed.
+# Raw texture dump, font sources, sprite manifest and the jar fetched by CI.
+theme/.cache/
+theme/minecraft-textures.css
+theme/minecraft-derived.css
+theme/minecraft-font.css
+# Built stylesheet (embeds the sprites and the font). Built by `npm run build`, published by CI.
+dist/
+
+# GitHub Pages build output
+_site/

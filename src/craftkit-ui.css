@@ -1,0 +1,6 @@
+/* CraftKit UI entry: Tailwind CSS v4 + the Minecraft theme. Built by build.mjs into dist/craftkit-ui.css. */
+@import "tailwindcss";
+@import "../theme/minecraft.css";
+@import "./animations.css";
+
+/* Your own extra rules can go below. */

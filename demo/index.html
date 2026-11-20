@@ -1,0 +1,895 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CraftKit UI · Minecraft CSS Theme</title>
+  <link rel="stylesheet" href="/dist/craftkit-ui.css">
+</head>
+<body class="mc-page min-h-screen text-foreground">
+
+<!-- ============================== BARRE DU HAUT ============================== -->
+<header class="mc-bg-list sticky top-0 z-30">
+  <div class="flex flex-wrap items-center gap-3 px-4 py-2">
+    <span class="mc-sprite" data-sprite="block-grass-block-side-tinted" data-zoom="2" aria-hidden="true"></span>
+    <a href="#accueil" class="text-2xl text-mc-yellow no-underline">CraftKit UI</a>
+    <span class="hidden text-muted-foreground sm:inline">Minecraft CSS Theme · v0.1.0</span>
+    <div class="ml-auto flex flex-wrap gap-2">
+      <button id="mode" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Mode: Classic</button>
+      <button id="lang" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" aria-label="Language / Langue">EN | FR</button>
+      <button id="scale" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Scale: 2</button>
+    </div>
+  </div>
+  <div class="mc-separator"></div>
+  <!-- navigation mobile -->
+  <nav class="flex gap-1 overflow-x-auto px-2 py-1 lg:hidden" id="nav-mobile" aria-label="Sections"></nav>
+</header>
+
+<div class="flex">
+  <!-- ============================== NAVIGATION ============================== -->
+  <nav id="nav" aria-label="Sections" class="mc-bg-menu sticky top-[calc(26*var(--mc-px))] hidden h-[calc(100vh-26*var(--mc-px))] w-[calc(110*var(--mc-px))] shrink-0 flex-col gap-0.5 overflow-y-auto p-2 lg:flex">
+  </nav>
+
+  <main class="flex min-w-0 flex-1 flex-col gap-12 px-4 py-6 md:px-8">
+
+<!-- ============================== 1. ACCUEIL ============================== -->
+<section id="accueil" data-title="Title screen" class="relative flex flex-col items-center gap-3 py-6">
+  <p class="text-5xl text-white sm:text-7xl">CraftKit UI</p>
+  <p class="text-muted-foreground">Minecraft's GUI for any website. 63 utilities, 613 sprites, 2 modes, 27 animations.</p>
+  <span class="mc-splash absolute right-[8%] top-8 text-base">Also in pixels!</span>
+  <div class="mt-4 flex w-full max-w-[calc(200*var(--mc-px))] flex-col gap-2">
+    <a href="#boutons" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted w-full pt-1 pb-1.5 text-center text-xs no-underline">Singleplayer</a>
+    <a href="#listes" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted w-full pt-1 pb-1.5 text-center text-xs no-underline">Multiplayer</a>
+    <button class="mc-button mc-button-disabled w-full pt-1 pb-1.5 text-xs" disabled>Minecraft Realms</button>
+    <div class="flex gap-2">
+      <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex size-10 items-center justify-center" aria-label="Language"><span class="mc-sprite" data-sprite="icon-language"></span></button>
+      <a href="#formulaires" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex-1 pt-1 pb-1.5 text-center text-xs no-underline">Options...</a>
+      <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex-1 pt-1 pb-1.5 text-xs">Quit Game</button>
+      <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex size-10 items-center justify-center" aria-label="Accessibility"><span class="mc-sprite" data-sprite="icon-accessibility"></span></button>
+    </div>
+  </div>
+  <div class="absolute inset-x-0 bottom-0 flex flex-wrap justify-between gap-x-4 text-xs">
+    <p>Minecraft 26.2 (CraftKit UI)</p>
+    <p>Unofficial theme. Do not distribute!</p>
+  </div>
+</section>
+
+<!-- ============================== 1b. INSTALLATION ============================== -->
+<section id="installation" data-title="Get started" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Get started</h2>
+  <p class="text-muted-foreground">You need Node 20.11 or later and Minecraft: Java Edition 1.21.6 or later. Clone github.com/timiliris/craftkit-ui, then run npm install and npm run mc:setup (it extracts the textures and the font from your own game). Run the commands from the CraftKit UI folder.</p>
+  <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+    <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">1. Tailwind v4 project (shadcn/ui, Vite, Next.js...)</p>
+      <p>Copies the theme into your project and adds the imports after @import "tailwindcss".</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-app --tailwind --patch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <p class="text-xs text-muted-foreground">Without --patch it prints the lines to add. Delete shadcn's default :root and .dark color blocks: they override the theme's tokens.</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>@import &quot;tailwindcss&quot;;
+@import &quot;./craftkit-ui/minecraft.css&quot;;
+@import &quot;./craftkit-ui/animations.css&quot;;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+    </div>
+    <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">2. Any other site (HTML, PHP, a CMS...)</p>
+      <p>Compiles one stylesheet with only the classes your pages use.</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-site --css</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node tools/install.mjs ../my-site --css --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <p class="text-xs text-muted-foreground">Then link it from every page. Run it again after adding classes, or keep --watch running. Write class names in full in your code.</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;craftkit-ui.css&quot;&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+    </div>
+    <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3 xl:col-span-2">
+      <p class="font-medium text-mc-yellow">3. Use it</p>
+      <p>Every section below shows a component with the classes to copy. The basics:</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>&lt;html lang=&quot;en&quot;&gt;              &lt;!-- class=&quot;dark&quot; = Modern mode --&gt;
+&lt;body&gt;                        &lt;!-- page background and font come from the theme --&gt;
+  &lt;div class=&quot;mc-panel mx-auto flex max-w-md flex-col gap-2 p-2&quot;&gt;
+    &lt;p class=&quot;font-medium&quot;&gt;Options&lt;/p&gt;
+    &lt;input class=&quot;mc-text-field outline-none focus:mc-text-field-highlighted h-10 px-1.5&quot; placeholder=&quot;Search...&quot;&gt;
+    &lt;button class=&quot;mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted pt-1 pb-1.5 text-xs&quot;&gt;Done&lt;/button&gt;
+    &lt;span class=&quot;mc-bar mc-anim-fill max-w-full&quot; style=&quot;--mc-bar-value:.6&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;mc-sprite mc-anim-bob [--mc-sprite:var(--mc-item-diamond)]&quot; role=&quot;img&quot; aria-label=&quot;Diamond&quot;&gt;&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <ul class="flex list-none flex-col gap-1 p-0 text-xs text-muted-foreground">
+        <li>Sizes are game pixels: 1 spacing unit = 2 GUI px (h-10 = 20 px, a button). mc-scale-3 makes a block bigger.</li>
+        <li>Always pair a base with its states: hover: / focus-visible: / disabled: + the -highlighted or -disabled utility.</li>
+        <li>Avoid border-2, ring-1 and -translate-x-1/2: they break the pixel grid.</li>
+        <li>Click any sprite, color or texture below to copy its classes.</li>
+      </ul>
+    </div>
+    <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">4. With Claude Code</p>
+      <p>CraftKit UI is also a Claude Code plugin: its craftkit-ui skill knows the install steps and every class.</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>/plugin marketplace add timiliris/craftkit-ui
+/plugin install craftkit-ui@craftkit-ui</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <p class="text-xs text-muted-foreground">Then ask "add the Minecraft theme" in any project. If you move the folder, set CRAFTKIT_HOME to its new path.</p>
+    </div>
+    <div class="mc-panel-dark flex min-w-0 flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">5. Work on CraftKit UI itself</p>
+      <p>Rebuild the stylesheet, run this demo, or regenerate the textures and the font from your Minecraft (1.21.6 or newer).</p>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node build.mjs --watch</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>node serve.mjs</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+      <div class="flex items-start gap-2"><pre data-noi18n class="mc-panel-inset min-w-0 flex-1 overflow-x-auto whitespace-pre p-2 text-xs leading-[1.375]"><code>npm install
+npm run mc:setup</code></pre><button class="copy-code mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted shrink-0 self-start px-3 pt-1 pb-1.5 text-xs">Copy</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 2. FONDATIONS ============================== -->
+<section id="fondations" data-title="Foundations" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Foundations</h2>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="mc-panel flex flex-col gap-3 p-4">
+      <h3 class="text-lg font-medium">Typography</h3>
+      <p class="text-muted-foreground">The "Minecraft" pixel font, sizes in multiples of 8px that follow the scale.</p>
+      <div class="flex flex-col gap-1">
+        <p class="text-xs">text-xs / sm / base · 8 × scale</p>
+        <p class="text-lg">text-lg / xl · 8 × (scale + 1)</p>
+        <p class="text-2xl">text-2xl / 3xl</p>
+        <p class="text-4xl">text-4xl</p>
+        <p class="text-5xl">text-5xl</p>
+        <p class="text-6xl">6xl</p>
+      </div>
+      <div class="mc-separator-footer"></div>
+      <p>Normal · <span class="font-medium">font-medium</span> · <span class="font-bold">font-bold</span> · <span class="underline">underline</span> · <span class="line-through">line-through</span> · <span class="tracking-widest">tracking-widest</span></p>
+      <p>font-enchant : <span class="font-enchant">the quick brown fox</span></p>
+      <p>font-illager : <span class="font-illager">the quick brown fox</span></p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-3 p-4">
+      <h3 class="text-lg font-medium">Text shadow</h3>
+      <p>Every text gets the game's shadow (1 pixel, color × 0.25).</p>
+      <p class="mc-text-shadow-none">mc-text-shadow-none: no shadow.</p>
+      <div class="mc-panel-classic p-2"><p>On a light surface: no shadow, <span class="font-medium">bold titles</span>.</p><p class="mc-text-shadow">mc-text-shadow: forced shadow.</p></div>
+      <h3 class="mt-2 text-lg font-medium">Surfaces</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <div class="mc-surface-light bg-mc-panel p-2">mc-surface-light <span class="text-muted-foreground">muted</span></div>
+        <div class="mc-surface-dark bg-mc-popup p-2">mc-surface-dark <span class="text-muted-foreground">muted</span></div>
+        <div class="bg-card p-2">bg-card (auto)</div>
+        <div class="dark bg-background p-2">nested .dark</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mc-panel-dark flex flex-col gap-3 p-4">
+    <h3 class="text-lg font-medium">Colors</h3>
+    <p class="text-muted-foreground">Click a swatch to copy its class.</p>
+    <p class="font-medium">Chat colors</p>
+    <div class="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-8" data-swatches="mc-black mc-dark-blue mc-dark-green mc-dark-aqua mc-dark-red mc-dark-purple mc-gold mc-gray mc-dark-gray mc-blue mc-green mc-aqua mc-red mc-light-purple mc-yellow mc-white"></div>
+    <p class="font-medium">GUI colors</p>
+    <div class="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-8" data-swatches="mc-panel mc-slot mc-label mc-bevel-dark mc-bevel-light mc-button-text mc-button-text-disabled mc-text-field-text mc-text-field-disabled mc-text-field-hint mc-tooltip mc-xp mc-splash mc-stone mc-popup mc-toast mc-grass mc-grass-light mc-grass-dark mc-grass-darker"></div>
+    <p class="font-medium">shadcn/ui tokens (they follow the mode and the surface)</p>
+    <div class="grid grid-cols-2 gap-1 sm:grid-cols-4 lg:grid-cols-8" data-swatches="background foreground card card-foreground popover popover-foreground primary primary-foreground secondary secondary-foreground muted muted-foreground accent accent-foreground destructive border input ring chart-1 chart-2 chart-3 chart-4 chart-5 sidebar sidebar-foreground sidebar-primary sidebar-primary-foreground sidebar-accent sidebar-accent-foreground sidebar-border sidebar-ring" data-token="1"></div>
+  </div>
+
+  <div class="mc-panel flex flex-col gap-3 p-4">
+    <h3 class="text-lg font-medium">Scale (mc-scale-N)</h3>
+    <p class="text-muted-foreground">One scale per subtree: borders, spacing and font all follow.</p>
+    <div class="flex flex-wrap items-end gap-4">
+      <div class="mc-scale-1 flex flex-col items-start gap-1"><span>mc-scale-1</span><button class="mc-button outline-none hover:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Button</button></div>
+      <div class="mc-scale-2 flex flex-col items-start gap-1"><span>mc-scale-2</span><button class="mc-button outline-none hover:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Button</button></div>
+      <div class="mc-scale-3 flex flex-col items-start gap-1"><span>mc-scale-3</span><button class="mc-button outline-none hover:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Button</button></div>
+      <div class="mc-scale-4 flex flex-col items-start gap-1"><span>mc-scale-4</span><button class="mc-button outline-none hover:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Button</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 3. BOUTONS ============================== -->
+<section id="boutons" data-title="Buttons" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Buttons</h2>
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="mc-panel-dark flex flex-col gap-3 p-4">
+      <h3 class="text-lg font-medium">mc-button and its states</h3>
+      <div class="flex flex-wrap gap-2">
+        <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Normal</button>
+        <button class="mc-button mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Hovered</button>
+        <button class="mc-button mc-button-disabled px-4 pt-1 pb-1.5 text-xs" disabled>Disabled</button>
+      </div>
+      <h3 class="text-lg font-medium">Tints (mc-tint-*)</h3>
+      <div class="flex flex-wrap gap-2">
+        <button class="mc-button mc-tint-red outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Delete</button>
+        <button class="mc-button mc-tint-green outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Accept</button>
+        <button class="mc-button mc-tint-gold outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Premium</button>
+        <button class="mc-button mc-tint-blue outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Info</button>
+        <button class="mc-button mc-tint-purple outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Enchant</button>
+        <button class="mc-button mc-tint outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs [--mc-tint:#55FFFF]">Custom tint</button>
+      </div>
+      <h3 class="text-lg font-medium">Any size</h3>
+      <div class="flex flex-wrap items-start gap-2">
+        <button class="mc-button outline-none hover:mc-button-highlighted px-1 pt-0.5 pb-1 text-xs">XS</button>
+        <button class="mc-button outline-none hover:mc-button-highlighted h-10 w-10 text-xs" aria-label="Close">X</button>
+        <button class="mc-button outline-none hover:mc-button-highlighted h-16 px-8 text-lg">Large</button>
+        <button class="mc-button outline-none hover:mc-button-highlighted w-[calc(200*var(--mc-px))] max-w-full pt-1 pb-1.5 text-xs">200 × 20 (game size)</button>
+      </div>
+      <h3 class="text-lg font-medium">With an icon</h3>
+      <div class="flex flex-wrap gap-2">
+        <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex items-center gap-2 px-3 pt-1 pb-1.5 text-xs"><span class="mc-sprite" data-sprite="item-diamond-sword" aria-hidden="true"></span>Combat</button>
+        <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex items-center gap-2 px-3 pt-1 pb-1.5 text-xs"><span class="mc-sprite" data-sprite="icon-search" aria-hidden="true"></span>Search</button>
+        <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex items-center gap-2 px-3 pt-1 pb-1.5 text-xs"><span class="mc-sprite" data-sprite="icon-link" aria-hidden="true"></span>Link</button>
+      </div>
+    </div>
+
+    <div class="mc-panel flex flex-col gap-3 p-4">
+      <h3 class="text-lg font-medium">The game's sprite buttons</h3>
+      <p class="text-muted-foreground">Hover them: each button has its "highlighted" sprite.</p>
+      <div class="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
+        <span>Checkbox</span>
+        <div class="flex gap-3">
+          <button role="checkbox" aria-checked="false" class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-checkbox" data-sprite-hover="widget-checkbox-highlighted" data-sprite-on="widget-checkbox-selected" data-sprite-on-hover="widget-checkbox-selected-highlighted" aria-label="Option A"></button>
+          <button role="checkbox" aria-checked="true" class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-checkbox" data-sprite-hover="widget-checkbox-highlighted" data-sprite-on="widget-checkbox-selected" data-sprite-on-hover="widget-checkbox-selected-highlighted" aria-label="Option B"></button>
+        </div>
+        <span>Difficulty lock</span>
+        <div class="flex gap-3">
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-unlocked-button" data-sprite-hover="widget-unlocked-button-highlighted" data-sprite-on="widget-locked-button" data-sprite-on-hover="widget-locked-button-highlighted" role="switch" aria-checked="false" aria-label="Lock"></button>
+          <span class="mc-sprite" data-sprite="widget-locked-button-disabled" aria-hidden="true"></span>
+          <span class="mc-sprite" data-sprite="widget-unlocked-button-disabled" aria-hidden="true"></span>
+        </div>
+        <span>Close</span>
+        <div><button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-cross-button" data-sprite-hover="widget-cross-button-highlighted" aria-label="Close"></button></div>
+        <span>Pages</span>
+        <div class="flex gap-2">
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-page-backward" data-sprite-hover="widget-page-backward-highlighted" aria-label="Previous page"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-page-forward" data-sprite-hover="widget-page-forward-highlighted" aria-label="Next page"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="recipe-book-page-backward" data-sprite-hover="recipe-book-page-backward-highlighted" aria-label="Previous"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="recipe-book-page-forward" data-sprite-hover="recipe-book-page-forward-highlighted" aria-label="Next"></button>
+        </div>
+        <span>Warning</span>
+        <div class="flex gap-2">
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="dialog-warning-button" data-sprite-hover="dialog-warning-button-highlighted" aria-label="Warning"></button>
+          <span class="mc-sprite" data-sprite="dialog-warning-button-disabled" aria-hidden="true"></span>
+        </div>
+        <span>Recipe book</span>
+        <div class="flex gap-2">
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="recipe-book-button" data-sprite-hover="recipe-book-button-highlighted" aria-label="Recipe book"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="recipe-book-filter-disabled" data-sprite-hover="recipe-book-filter-disabled-highlighted" data-sprite-on="recipe-book-filter-enabled" data-sprite-on-hover="recipe-book-filter-enabled-highlighted" role="switch" aria-checked="false" aria-label="Filter"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="recipe-book-furnace-filter-disabled" data-sprite-hover="recipe-book-furnace-filter-disabled-highlighted" data-sprite-on="recipe-book-furnace-filter-enabled" data-sprite-on-hover="recipe-book-furnace-filter-enabled-highlighted" role="switch" aria-checked="true" aria-label="Furnace filter"></button>
+        </div>
+        <span>Beacon</span>
+        <div class="flex gap-2">
+          <button class="mc-sprite relative flex items-center justify-center outline-none focus-visible:mc-focus-ring" data-sprite="container-beacon-button" data-sprite-hover="container-beacon-button-highlighted" data-sprite-on="container-beacon-button-selected" role="switch" aria-checked="false" aria-label="Speed"><span class="mc-sprite" data-sprite="item-sugar"></span></button>
+          <button class="mc-sprite relative flex items-center justify-center" data-sprite="container-beacon-button-disabled" disabled aria-label="Strength"><span class="mc-sprite opacity-50" data-sprite="item-blaze-powder"></span></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="container-beacon-confirm" aria-label="Confirm"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="container-beacon-cancel" aria-label="Cancel"></button>
+        </div>
+        <span>Lists</span>
+        <div class="flex flex-wrap gap-2">
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="transferable-list-select" data-sprite-hover="transferable-list-select-highlighted" aria-label="Add"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="transferable-list-unselect" data-sprite-hover="transferable-list-unselect-highlighted" aria-label="Remove"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="transferable-list-move-up" data-sprite-hover="transferable-list-move-up-highlighted" aria-label="Move up"></button>
+          <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="transferable-list-move-down" data-sprite-hover="transferable-list-move-down-highlighted" aria-label="Move down"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 4. FORMULAIRES ============================== -->
+<section id="formulaires" data-title="Forms" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Forms</h2>
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <form class="mc-panel flex flex-col gap-3 p-4" onsubmit="return false">
+      <h3 class="text-lg font-medium">Create New World</h3>
+      <label class="flex flex-col gap-1"><span>World Name</span>
+        <input class="mc-text-field outline-none focus:mc-text-field-highlighted px-1.5 py-1" value="Nouveau monde"></label>
+      <label class="flex flex-col gap-1"><span>Seed</span>
+        <input class="mc-text-field outline-none focus:mc-text-field-highlighted px-1.5 py-1" placeholder="Leave blank for a random seed"></label>
+      <label class="flex flex-col gap-1"><span>Disabled</span>
+        <input class="mc-text-field px-1.5 py-1 text-mc-text-field-disabled" value="Non modifiable" disabled></label>
+      <label class="flex flex-col gap-1"><span>Description (textarea)</span>
+        <textarea rows="3" class="mc-text-field outline-none focus:mc-text-field-highlighted resize-y px-1.5 py-1">A world full of diamonds.</textarea></label>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="cycle mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs" data-label="Game Mode" data-values="Survival|Creative|Hardcore|Spectator">Game Mode: Survival</button>
+        <button type="button" class="cycle mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs" data-label="Difficulty" data-values="Normal|Hard|Peaceful|Easy">Difficulty: Normal</button>
+        <button type="button" class="cycle mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs" data-label="Allow Cheats" data-values="OFF|ON">Allow Cheats: OFF</button>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button type="button" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Cancel</button>
+        <button type="submit" class="mc-button mc-tint-green outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Create World</button>
+      </div>
+    </form>
+
+    <div class="mc-panel-dark flex flex-col gap-3 p-4">
+      <h3 class="text-lg font-medium">Options</h3>
+      <div class="slider mc-slider-track outline-none hover:mc-slider-track-highlighted focus-visible:mc-slider-track-highlighted relative h-10 w-full cursor-pointer select-none" role="slider" tabindex="0" data-label="FOV" data-min="30" data-max="110" data-value="70">
+        <div class="handle mc-slider-handle absolute top-[calc(-1*var(--mc-px))] h-10 w-4"></div>
+        <span class="text relative flex h-full items-center justify-center text-xs"></span>
+      </div>
+      <div class="slider mc-slider-track outline-none hover:mc-slider-track-highlighted focus-visible:mc-slider-track-highlighted relative h-10 w-full cursor-pointer select-none" role="slider" tabindex="0" data-label="Music" data-min="0" data-max="100" data-value="35" data-suffix="%">
+        <div class="handle mc-slider-handle absolute top-[calc(-1*var(--mc-px))] h-10 w-4"></div>
+        <span class="text relative flex h-full items-center justify-center text-xs"></span>
+      </div>
+      <div class="slider mc-slider-track outline-none hover:mc-slider-track-highlighted focus-visible:mc-slider-track-highlighted relative h-10 w-full cursor-pointer select-none" role="slider" tabindex="0" data-label="Render Distance" data-min="2" data-max="32" data-value="12" data-suffix=" chunks">
+        <div class="handle mc-slider-handle absolute top-[calc(-1*var(--mc-px))] h-10 w-4"></div>
+        <span class="text relative flex h-full items-center justify-center text-xs"></span>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="cycle mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted pt-1 pb-1.5 text-xs" data-label="Clouds" data-values="Fancy|Fast|OFF">Clouds: Fancy</button>
+        <button class="cycle mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted pt-1 pb-1.5 text-xs" data-label="Graphics" data-values="Fancy|Fast|Fabulous!">Graphics: Fancy</button>
+      </div>
+      <h3 class="mt-2 text-lg font-medium">Checkboxes and select</h3>
+      <label class="flex items-center gap-2"><button type="button" role="checkbox" aria-checked="true" class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-checkbox" data-sprite-hover="widget-checkbox-highlighted" data-sprite-on="widget-checkbox-selected" data-sprite-on-hover="widget-checkbox-selected-highlighted"></button>Show Subtitles</label>
+      <label class="flex items-center gap-2"><button type="button" role="checkbox" aria-checked="false" class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-checkbox" data-sprite-hover="widget-checkbox-highlighted" data-sprite-on="widget-checkbox-selected" data-sprite-on-hover="widget-checkbox-selected-highlighted"></button>Colorblind mode</label>
+      <div class="relative" id="select">
+        <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted w-full pt-1 pb-1.5 text-xs" aria-haspopup="listbox" aria-expanded="false">Language: English ▼</button>
+        <div role="listbox" hidden class="mc-panel-dark absolute left-0 right-0 top-full z-20 mt-1 flex max-h-[calc(80*var(--mc-px))] flex-col overflow-y-auto p-1">
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">Français</div>
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">English</div>
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">Deutsch</div>
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">Español</div>
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">Nederlands</div>
+          <div role="option" class="cursor-pointer px-2 py-1 hover:bg-accent">Lolcat</div>
+        </div>
+      </div>
+      <label class="flex flex-col gap-1"><span>Search with an icon</span>
+        <span class="mc-text-field flex items-center gap-1.5 px-1.5 py-1 focus-within:mc-text-field-highlighted"><span class="mc-sprite" data-sprite="icon-search" aria-hidden="true"></span><input class="min-w-0 flex-1 bg-transparent outline-none" placeholder="Search an item..."></span></label>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 5. NAVIGATION ============================== -->
+<section id="navigation" data-title="Navigation" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Navigation</h2>
+  <div class="flex flex-col">
+    <div class="flex gap-0.5" role="tablist" id="tabs">
+      <button role="tab" aria-selected="true" class="mc-tab-selected outline-none hover:mc-tab-selected-highlighted focus-visible:mc-tab-selected-highlighted px-6 pb-1.5 text-xs" data-panel="Jeu">Game</button>
+      <button role="tab" aria-selected="false" class="mc-tab outline-none hover:mc-tab-highlighted focus-visible:mc-tab-highlighted px-6 pb-1.5 text-xs" data-panel="Monde">World</button>
+      <button role="tab" aria-selected="false" class="mc-tab outline-none hover:mc-tab-highlighted focus-visible:mc-tab-highlighted px-6 pb-1.5 text-xs" data-panel="Plus">More</button>
+    </div>
+    <div class="mc-bg-list p-4"><p id="tab-content">The game's tabs: mc-tab, mc-tab-selected and their hover states.</p></div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg">Context menu (role=menu)</h3>
+      <div role="menu" id="menu" class="mc-panel-dark flex w-[calc(130*var(--mc-px))] flex-col p-1">
+        <div role="menuitem" tabindex="-1" class="cursor-pointer px-2 py-1 hover:bg-accent">Copy coordinates</div>
+        <div role="menuitem" tabindex="-1" class="cursor-pointer px-2 py-1 hover:bg-accent">Teleport</div>
+        <div role="menuitem" tabindex="-1" class="cursor-pointer px-2 py-1 hover:bg-accent">Invite to party</div>
+        <div class="mc-separator my-1"></div>
+        <div role="menuitem" tabindex="-1" class="cursor-pointer px-2 py-1 text-destructive hover:bg-accent">Ban</div>
+      </div>
+      <p class="text-muted-foreground">The active row gets the --ring outline automatically (data-highlighted).</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg">Pagination and breadcrumb</h3>
+      <div class="flex items-center gap-3" id="pager">
+        <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-page-backward" data-sprite-hover="widget-page-backward-highlighted" aria-label="Previous page" data-dir="-1"></button>
+        <span>Page <span id="page">1</span> / 5</span>
+        <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-page-forward" data-sprite-hover="widget-page-forward-highlighted" aria-label="Next page" data-dir="1"></button>
+      </div>
+      <p class="text-muted-foreground">Options <span class="text-mc-dark-gray">›</span> Video <span class="text-mc-dark-gray">›</span> <span class="text-foreground">Quality</span></p>
+      <h3 class="text-lg">Recipe book / creative tabs</h3>
+      <div class="flex items-end gap-1">
+        <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-tab-selected"><span class="mc-sprite" data-sprite="item-diamond-pickaxe"></span></span>
+        <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-tab"><span class="mc-sprite" data-sprite="item-bread"></span></span>
+        <span class="mc-sprite relative flex items-center justify-center" data-sprite="container-creative-inventory-tab-top-selected-1"><span class="mc-sprite" data-sprite="item-golden-apple"></span></span>
+        <span class="mc-sprite relative flex items-center justify-center" data-sprite="container-creative-inventory-tab-top-unselected-1"><span class="mc-sprite" data-sprite="item-redstone"></span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <h3 class="text-lg">Advancement tabs and tree</h3>
+    <div class="flex items-end gap-0">
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="advancements-tab-above-left-selected"><span class="mc-sprite" data-sprite="block-grass-block-side-tinted"></span></span>
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="advancements-tab-above-middle"><span class="mc-sprite" data-sprite="item-iron-pickaxe"></span></span>
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="advancements-tab-above-middle"><span class="mc-sprite" data-sprite="item-ender-eye"></span></span>
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="advancements-tab-above-right"><span class="mc-sprite" data-sprite="item-wheat"></span></span>
+    </div>
+    <div class="mc-tile mc-tile-2x relative flex flex-wrap items-center gap-6 overflow-hidden p-6" style="--mc-tile: var(--mc-gui-advancements-backgrounds-stone)">
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-task-frame-obtained"><span class="mc-sprite" data-sprite="block-grass-block-side-tinted"></span></span><span class="text-xs">Task ✔</span></div>
+      <span class="h-0.5 w-8 bg-white"></span>
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-task-frame-unobtained"><span class="mc-sprite" data-sprite="item-wooden-pickaxe"></span></span><span class="text-xs">Task</span></div>
+      <span class="h-0.5 w-8 bg-white"></span>
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-goal-frame-obtained"><span class="mc-sprite" data-sprite="item-diamond"></span></span><span class="text-xs">Goal ✔</span></div>
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-goal-frame-unobtained"><span class="mc-sprite" data-sprite="item-ender-eye"></span></span><span class="text-xs">Goal</span></div>
+      <span class="h-0.5 w-8 bg-white"></span>
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-challenge-frame-obtained"><span class="mc-sprite" data-sprite="item-nether-star"></span></span><span class="text-xs">Challenge ✔</span></div>
+      <div class="flex flex-col items-center gap-1"><span class="mc-sprite flex items-center justify-center" data-sprite="advancements-challenge-frame-unobtained"><span class="mc-sprite" data-sprite="item-elytra"></span></span><span class="text-xs">Challenge</span></div>
+      <div class="flex flex-col gap-0.5">
+        <div class="mc-box-dark px-2 py-1">Diamonds!</div>
+        <div class="mc-box-gold px-2 py-1">Obtained on 11/20</div>
+        <div class="mc-box-blue px-2 py-1">Not obtained</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 6. CONTENEURS ============================== -->
+<section id="conteneurs" data-title="Panels & popups" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Panels and popups</h2>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="mc-panel p-4"><p class="font-medium">mc-panel</p><p class="text-muted-foreground">The mode's surface: light in Classic, dark in Modern.</p></div>
+    <div class="mc-panel-classic p-4"><p class="font-medium">mc-panel-classic</p><p class="text-muted-foreground">Always the bevelled light gray panel.</p></div>
+    <div class="mc-panel-dark p-4"><p class="font-medium">mc-panel-dark</p><p class="text-muted-foreground">Always the dark popup.</p></div>
+    <div class="mc-panel-inset p-4"><p>mc-panel-inset</p><p class="text-muted-foreground">A black well with a slot bevel.</p></div>
+    <div class="mc-bg-menu p-4"><p>mc-bg-menu</p><p class="text-muted-foreground">25% black veil (menu_background).</p></div>
+    <div class="mc-bg-list p-4"><p>mc-bg-list</p><p class="text-muted-foreground">44% black veil (menu_list_background).</p></div>
+    <div class="mc-slice p-4 [--mc-slice-src:var(--mc-popup-background)] [--mc-slice-t:6] [--mc-slice-r:6] [--mc-slice-b:6] [--mc-slice-l:6]" id="popup-bg"><p class="text-mc-yellow">mc-slice (popup_background)</p><p>Any sprite as a nine-slice.</p></div>
+    <div class="mc-panel-dark flex flex-col gap-3 p-3 md:col-span-2 xl:col-span-3" id="slice-hooks">
+      <p class="font-medium text-mc-yellow">Nine-slice hooks</p>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div class="flex flex-col gap-1"><div class="mc-slice-tiled flex h-16 items-center justify-center [--mc-slice-src:var(--mc-widget-button-highlighted-frame)] [--mc-slice-tiles:var(--mc-widget-button-highlighted-tiles)] [--mc-slice-w:200] [--mc-slice-h:20] [--mc-slice-t:3] [--mc-slice-r:3] [--mc-slice-b:3] [--mc-slice-l:3]">mc-slice-tiled</div><p class="text-xs text-muted-foreground">Opaque noisy sprites, tiled from the corner like the game (what mc-button uses): --mc-slice-tiles, --mc-slice-w / -h.</p></div>
+        <div class="flex flex-col gap-1"><div class="flex gap-2"><div class="mc-slice h-16 flex-1 [--mc-slice-src:var(--mc-block-bricks)] [--mc-slice-t:4] [--mc-slice-r:4] [--mc-slice-b:4] [--mc-slice-l:4]"></div><div class="mc-slice h-16 flex-1 [--mc-slice-src:var(--mc-block-bricks)] [--mc-slice-t:4] [--mc-slice-r:4] [--mc-slice-b:4] [--mc-slice-l:4] [--mc-slice-repeat:repeat]"></div></div><p class="text-xs text-muted-foreground">--mc-slice-repeat: stretch (left, default) or repeat (right).</p></div>
+        <div class="flex flex-col gap-1"><div class="mc-slice flex h-16 items-center justify-center [--mc-slice-src:var(--mc-popup-background)] [--mc-slice-t:6] [--mc-slice-r:6] [--mc-slice-b:6] [--mc-slice-l:6] [--mc-bw-t:2] [--mc-bw-r:2] [--mc-bw-b:2] [--mc-bw-l:2]">--mc-bw-*: 2</div><p class="text-xs text-muted-foreground">--mc-bw-t / -r / -b / -l: the layout border in GUI px, separate from the slice.</p></div>
+        <div class="flex flex-col gap-1"><div class="p-3"><div class="mc-slice flex h-12 items-center justify-center bg-mc-slot [--mc-slice-src:var(--mc-toast-now-playing)] [--mc-slice-t:4] [--mc-slice-r:4] [--mc-slice-b:4] [--mc-slice-l:4] [--mc-slice-outset:calc(4*var(--mc-px))]">outset</div></div><p class="text-xs text-muted-foreground">--mc-slice-outset: draws the frame outside the box.</p></div>
+        <div class="flex flex-col gap-1"><div class="flex gap-2"><div class="mc-slice mc-tint mc-tint-green h-16 flex-1 [--mc-slice-src:var(--mc-popup-background)] [--mc-slice-t:6] [--mc-slice-r:6] [--mc-slice-b:6] [--mc-slice-l:6]"></div><div class="mc-slice mc-tint h-16 flex-1 [--mc-tint:#5a8dff] [--mc-slice-src:var(--mc-popup-background)] [--mc-slice-t:6] [--mc-slice-r:6] [--mc-slice-b:6] [--mc-slice-l:6]"></div></div><p class="text-xs text-muted-foreground">mc-tint on a nine-slice: the tint follows the sprite (--mc-slice-mask, default the source).</p></div>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <div class="mc-separator"></div><p class="text-xs text-muted-foreground">mc-separator</p>
+      <div class="mc-separator-footer"></div><p class="text-xs text-muted-foreground">mc-separator-footer</p>
+      <div class="flex h-10 items-center gap-2"><span>A</span><span class="mc-separator-vertical h-full"></span><span>B</span><span class="text-xs text-muted-foreground">mc-separator-vertical</span></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg">Tooltips</h3>
+      <div class="flex flex-wrap items-start gap-4">
+        <div class="mc-tooltip w-fit p-1">
+          <p class="text-mc-aqua">Diamond Sword</p>
+          <p class="text-mc-gray">Sharpness V</p>
+          <p class="text-mc-gray">Unbreaking III</p>
+          <p class="text-mc-gray">Sweeping Edge III</p>
+          <p class="mt-2 text-mc-gray">When in Main Hand:</p>
+          <p class="text-mc-dark-green"> 8 Attack Damage</p>
+          <p class="text-mc-dark-green"> 1.6 Attack Speed</p>
+          <p class="text-mc-dark-gray">minecraft:diamond_sword</p>
+        </div>
+        <div class="mc-tooltip w-fit p-1"><p class="text-mc-light-purple">Nether Star</p><p class="text-mc-gray">Epic</p></div>
+        <div class="mc-tooltip w-fit p-1"><p class="text-mc-yellow">Golden Apple</p><p class="text-mc-gray">Rare</p></div>
+        <div class="mc-tooltip w-fit p-1"><p>Simple tooltip</p></div>
+      </div>
+      <p class="text-muted-foreground">Hover the items in the inventory below: the tooltip follows the mouse.</p>
+    </div>
+    <div class="flex flex-col gap-3">
+      <h3 class="text-lg">Modal dialog</h3>
+      <p class="text-muted-foreground">mc-overlay for the backdrop, mc-center to center without a transform.</p>
+      <div><button id="open-dialog" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-4 pt-1 pb-1.5 text-xs">Open the dialog</button></div>
+      <div class="relative h-[calc(80*var(--mc-px))] overflow-hidden mc-bg-dirt">
+        <div class="mc-overlay absolute inset-0"></div>
+        <div class="mc-panel-dark absolute inset-x-8 top-6 p-3 text-center"><p>Dialog preview</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <h3 class="text-lg">Toasts</h3>
+    <div class="flex flex-wrap gap-2">
+      <button class="toast-btn mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-kind="advancement">Advancement</button>
+      <button class="toast-btn mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-kind="challenge">Challenge</button>
+      <button class="toast-btn mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-kind="system">System</button>
+      <button class="toast-btn mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-kind="tutorial">Tutorial</button>
+      <button class="toast-btn mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-kind="recipe">Recipe</button>
+    </div>
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div class="mc-toast flex items-center gap-3 p-2"><span class="mc-sprite" data-sprite="item-diamond" aria-hidden="true"></span><div><p class="text-mc-yellow">Advancement Made!</p><p>Diamonds!</p></div></div>
+      <div class="mc-toast flex items-center gap-3 p-2"><span class="mc-sprite" data-sprite="item-elytra" aria-hidden="true"></span><div><p class="text-mc-light-purple">Challenge Complete!</p><p>Sky's the Limit</p></div></div>
+      <div class="mc-toast-system pt-2 pl-0.5 pr-2 pb-2"><p class="text-mc-yellow">System notification</p><p>The server restarts in 5 min.</p></div>
+      <div class="mc-toast-tutorial flex items-center gap-2 p-2"><span class="mc-sprite" data-sprite="toast-movement-keys" aria-hidden="true"></span><div><p class="font-medium">Move</p><p>Use W A S D</p></div></div>
+      <div class="mc-toast-tutorial flex items-center gap-2 p-2"><span class="mc-sprite" data-sprite="toast-mouse" aria-hidden="true"></span><div><p class="font-medium">Look around</p><p>Use your mouse</p></div></div>
+      <div class="mc-toast-tutorial flex items-center gap-2 p-2"><span class="mc-sprite" data-sprite="toast-tree" aria-hidden="true"></span><div><p class="font-medium">Find a tree</p><p>Punch a log</p></div></div>
+      <div class="mc-sprite relative" data-sprite="toast-recipe"><span class="mc-sprite absolute left-[calc(8*var(--mc-px))] top-[calc(8*var(--mc-px))]" data-sprite="item-golden-apple"></span><span class="absolute left-[calc(30*var(--mc-px))] top-[calc(6*var(--mc-px))] text-xs leading-tight"><span class="text-mc-dark-purple">New Recipes Unlocked!</span><br><span class="text-black">Check your recipe book</span></span></div>
+      <div class="mc-slice flex items-center gap-2 p-2 [--mc-slice-src:var(--mc-toast-now-playing)] [--mc-slice-t:4] [--mc-slice-r:4] [--mc-slice-b:4] [--mc-slice-l:4]" id="now-playing"><span class="mc-anim-music-notes" aria-hidden="true"></span><p>Now Playing: Lena Raine - Pigstep</p></div>
+      <div class="mc-toast-tutorial flex items-center gap-2 p-2"><span class="mc-sprite" data-sprite="toast-social-interactions" aria-hidden="true"></span><div><p class="font-medium">Social Interactions</p><p>Press P</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 7. INVENTAIRE ============================== -->
+<section id="inventaire" data-title="Inventory & containers" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Inventory and containers</h2>
+  <div class="flex flex-wrap items-start gap-6">
+    <div class="mc-panel-classic flex flex-col gap-1 p-2">
+      <p class="font-medium">Crafting</p>
+      <div class="flex items-center gap-4">
+        <div class="grid grid-cols-3" id="craft"></div>
+        <span class="text-2xl text-mc-label mc-text-shadow-none">→</span>
+        <div class="mc-slot size-[calc(26*var(--mc-px))] flex items-center justify-center" data-item="diamond-pickaxe"></div>
+      </div>
+      <p class="mt-2 font-medium">Inventory</p>
+      <div class="grid grid-cols-9" id="inv"></div>
+      <div class="h-2"></div>
+      <div class="grid grid-cols-9" id="inv-hotbar"></div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <div class="mc-panel-classic flex flex-col gap-2 p-2">
+        <p class="font-medium">Furnace</p>
+        <div class="flex items-center gap-4">
+          <div class="flex flex-col items-center gap-1">
+            <div class="mc-slot size-9 flex items-center justify-center" data-item="iron-ingot"></div>
+            <span class="mc-sprite mc-anim-burn" data-sprite="container-furnace-lit-progress" style="clip-path: inset(calc((1 - var(--mc-bar-value)) * 100%) 0 0 0)"></span>
+            <div class="mc-slot size-9 flex items-center justify-center" data-item="coal" data-count="12"></div>
+          </div>
+          <span id="furnace" class="mc-bar mc-anim-cook [--mc-bar-w:24] [--mc-bar-h:16] [--mc-bar-bg:none] [--mc-bar-fill:var(--mc-container-furnace-burn-progress)] opacity-100" role="progressbar" aria-label="Cooking"></span>
+          <div class="mc-slot size-[calc(26*var(--mc-px))] flex items-center justify-center" data-item="gold-ingot" data-count="3"></div>
+        </div>
+      </div>
+
+      <div class="mc-panel-classic flex flex-col gap-2 p-2">
+        <p class="font-medium">Enchanting table</p>
+        <button class="ench mc-sprite relative outline-none focus-visible:mc-focus-ring" data-sprite="container-enchanting-table-enchantment-slot" data-sprite-hover="container-enchanting-table-enchantment-slot-highlighted"><span class="mc-sprite absolute left-[calc(1*var(--mc-px))] top-[calc(1*var(--mc-px))]" data-sprite="container-enchanting-table-level-1"></span><span class="font-enchant absolute left-[calc(20*var(--mc-px))] top-[calc(2*var(--mc-px))] text-xs text-mc-bevel-dark mc-text-shadow-none">elder scroll</span><span class="absolute bottom-0 right-[calc(2*var(--mc-px))] text-xs text-mc-xp">1</span></button>
+        <button class="ench mc-sprite relative outline-none focus-visible:mc-focus-ring" data-sprite="container-enchanting-table-enchantment-slot" data-sprite-hover="container-enchanting-table-enchantment-slot-highlighted"><span class="mc-sprite absolute left-[calc(1*var(--mc-px))] top-[calc(1*var(--mc-px))]" data-sprite="container-enchanting-table-level-2"></span><span class="font-enchant absolute left-[calc(20*var(--mc-px))] top-[calc(2*var(--mc-px))] text-xs text-mc-bevel-dark mc-text-shadow-none">klaatu barada</span><span class="absolute bottom-0 right-[calc(2*var(--mc-px))] text-xs text-mc-xp">15</span></button>
+        <span class="mc-sprite relative" data-sprite="container-enchanting-table-enchantment-slot-disabled"><span class="mc-sprite absolute left-[calc(1*var(--mc-px))] top-[calc(1*var(--mc-px))]" data-sprite="container-enchanting-table-level-3-disabled"></span><span class="font-enchant absolute left-[calc(20*var(--mc-px))] top-[calc(2*var(--mc-px))] text-xs text-mc-dark-gray mc-text-shadow-none">nikto</span><span class="absolute bottom-0 right-[calc(2*var(--mc-px))] text-xs text-mc-dark-green">30</span></span>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4">
+      <div class="mc-panel-classic flex flex-col gap-2 p-2">
+        <p class="font-medium">Villager (Librarian)</p>
+        <div class="trade flex items-center gap-1 p-0.5 hover:bg-white/30"><div class="mc-slot size-9 flex items-center justify-center" data-item="emerald" data-count="9"></div><div class="mc-slot size-9 flex items-center justify-center" data-item="book"></div><span class="mc-sprite mx-1" data-sprite="container-villager-trade-arrow"></span><div class="mc-slot size-9 flex items-center justify-center" data-item="enchanted-book"></div></div>
+        <div class="trade flex items-center gap-1 p-0.5 hover:bg-white/30"><div class="mc-slot size-9 flex items-center justify-center" data-item="paper" data-count="24"></div><div class="size-9"></div><span class="mc-sprite mx-1" data-sprite="container-villager-trade-arrow"></span><div class="mc-slot size-9 flex items-center justify-center" data-item="emerald"></div></div>
+        <div class="trade relative flex items-center gap-1 p-0.5"><div class="mc-slot size-9 flex items-center justify-center" data-item="emerald" data-count="5"></div><div class="mc-slot size-9 flex items-center justify-center" data-item="compass-00"></div><span class="mc-sprite mx-1" data-sprite="container-villager-trade-arrow-out-of-stock"></span><div class="mc-slot size-9 flex items-center justify-center" data-item="filled-map"></div><span class="mc-sprite absolute right-0" data-sprite="container-villager-out-of-stock"></span></div>
+        <p class="text-xs">Apprentice</p>
+        <span class="mc-bar [--mc-bar-w:102] [--mc-bar-bg:var(--mc-container-villager-experience-bar-background)] [--mc-bar-fill:var(--mc-container-villager-experience-bar-current)]" style="--mc-bar-value:0.45" role="progressbar" aria-label="Villager experience"></span>
+      </div>
+
+      <div class="mc-panel-classic flex flex-col gap-2 p-2">
+        <p class="font-medium">Recipe book</p>
+        <div class="flex gap-1">
+          <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-slot-craftable"><span class="mc-sprite" data-sprite="item-bread"></span></span>
+          <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-slot-many-craftable"><span class="mc-sprite" data-sprite="item-cake"></span></span>
+          <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-slot-uncraftable"><span class="mc-sprite opacity-60" data-sprite="item-golden-carrot"></span></span>
+          <span class="mc-sprite relative flex items-center justify-center" data-sprite="recipe-book-slot-many-uncraftable"><span class="mc-sprite opacity-60" data-sprite="item-pumpkin-pie"></span></span>
+        </div>
+        <p class="font-medium">Anvil</p>
+        <div class="flex items-center gap-2">
+          <span class="mc-sprite relative" data-sprite="container-anvil-text-field"><input class="absolute inset-0 bg-transparent px-1 text-xs outline-none" value="Excalibur" aria-label="Rename"></span>
+          <span class="mc-sprite" data-sprite="container-anvil-error" aria-label="Not possible" role="img"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 8. HUD ============================== -->
+<section id="hud" data-title="HUD" class="flex flex-col gap-6">
+  <h2 class="text-3xl">HUD</h2>
+  <div class="mc-bg-stone mc-tile-dim relative flex min-h-[calc(120*var(--mc-px))] flex-col items-center justify-end gap-1 overflow-hidden p-4">
+    <span class="mc-sprite absolute left-1/2 top-[calc(20*var(--mc-px))] ml-[calc(-8*var(--mc-px))]" data-sprite="hud-crosshair" aria-hidden="true"></span>
+    <div class="absolute left-2 top-2 flex flex-col gap-0.5">
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="hud-effect-background"><span class="mc-sprite" data-sprite="item-sugar"></span></span>
+      <span class="mc-sprite relative flex items-center justify-center" data-sprite="hud-effect-background-ambient"><span class="mc-sprite" data-sprite="item-golden-apple"></span></span>
+    </div>
+    <div class="absolute right-2 top-2 flex flex-col items-end gap-1">
+      <p class="mc-bg-menu px-1 text-xs">Ender Dragon</p>
+      <span class="mc-bar [--mc-bar-bg:var(--mc-boss-bar-pink-background)] [--mc-bar-fill:var(--mc-boss-bar-pink-progress)]" style="--mc-bar-value:0.7" role="progressbar" aria-label="Boss health"></span>
+    </div>
+    <div class="flex w-[calc(182*var(--mc-px))] items-end justify-between">
+      <div class="flex flex-col gap-0.5">
+        <div class="hud-row" data-kind="armor" data-n="7"></div>
+        <div class="hud-row" data-kind="heart" data-n="17"></div>
+      </div>
+      <div class="flex flex-col items-end gap-0.5">
+        <div class="hud-row" data-kind="air" data-n="6"></div>
+        <div class="hud-row" data-kind="food" data-n="15"></div>
+      </div>
+    </div>
+    <div class="relative flex flex-col items-center">
+      <span class="mc-anim-levelup absolute -top-[calc(9*var(--mc-px))] text-xs text-mc-xp" id="xp-level">30</span>
+      <span id="hotbar-name" class="absolute -top-[calc(22*var(--mc-px))] whitespace-nowrap text-xs text-white"></span>
+      <span class="mc-bar mc-anim-fill max-w-full" id="xp-bar" style="--mc-bar-value:0.62" role="progressbar" aria-label="Experience"></span>
+    </div>
+    <div class="flex items-end gap-2">
+      <span class="mc-sprite relative" data-sprite="hud-hotbar-offhand-left"><span class="mc-sprite absolute left-[calc(3*var(--mc-px))] top-[calc(4*var(--mc-px))]" data-sprite="item-totem-of-undying"></span></span>
+      <div class="mc-sprite relative" data-sprite="hud-hotbar" id="hotbar" tabindex="0" aria-label="Hotbar: mouse wheel or keys 1 to 9"></div>
+      <span class="mc-sprite relative" data-sprite="hud-hotbar-attack-indicator-background"></span>
+    </div>
+  </div>
+  <p class="text-muted-foreground">Interactive hotbar: click it, then use the mouse wheel or keys 1 to 9.</p>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="mc-panel-dark flex flex-col gap-2 p-4">
+      <h3 class="text-lg font-medium">Hearts, hunger, armor, air</h3>
+      <div class="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1" id="hud-variants"></div>
+    </div>
+    <div class="mc-panel-dark flex flex-col gap-2 p-4">
+      <h3 class="text-lg font-medium">Bars (mc-bar)</h3>
+      <div class="flex flex-col gap-2" id="bossbars"></div>
+      <p>Horse jump</p>
+      <span class="mc-bar max-w-full [--mc-bar-bg:var(--mc-hud-jump-bar-background)] [--mc-bar-fill:var(--mc-hud-jump-bar-progress)]" style="--mc-bar-value:0.8"></span>
+      <span class="mc-bar max-w-full [--mc-bar-bg:var(--mc-hud-jump-bar-cooldown)] [--mc-bar-fill:none]"></span>
+      <p>Attack indicator and locator</p>
+      <div class="flex items-center gap-4">
+        <span class="mc-bar [--mc-bar-w:16] [--mc-bar-h:4] [--mc-bar-bg:var(--mc-hud-crosshair-attack-indicator-background)] [--mc-bar-fill:var(--mc-hud-crosshair-attack-indicator-progress)]" style="--mc-bar-value:0.6"></span>
+        <span class="mc-sprite" data-sprite="hud-crosshair-attack-indicator-full"></span>
+        <span class="mc-anim-locator-up"></span>
+        <span class="mc-anim-locator-down"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ANIMATIONS ============================== -->
+<section id="animations" data-title="Animations" class="flex flex-col gap-6">
+  <div class="flex flex-wrap items-center gap-3">
+    <h2 class="text-3xl">Animations</h2>
+    <button id="pause-all" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted ml-auto px-3 pt-1 pb-1.5 text-xs">Pause all</button>
+    <button id="replay-all" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Replay all</button>
+  </div>
+  <p class="text-muted-foreground">The theme only animates mc-splash. CraftKit UI adds src/animations.css: 27 utilities for the game's motion, always on whole pixels, stopped by prefers-reduced-motion.</p>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">mc-splash</p>
+      <div class="flex h-24 items-center justify-center"><span class="mc-splash text-lg">Pixel perfect!</span></div>
+      <p class="text-xs text-muted-foreground">The title screen splash: two pulses a second.</p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Animated textures (mc-anim-tile)</p>
+      <div class="grid grid-cols-4 gap-1">
+        <div class="mc-anim-water h-16"></div><div class="mc-anim-lava h-16"></div><div class="mc-anim-magma h-16"></div><div class="mc-anim-sculk h-16"></div>
+      </div>
+      <p class="text-xs text-muted-foreground">mc-anim-water (32 frames), mc-anim-lava (38), mc-anim-magma, mc-anim-sculk.</p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Animated sprites (mc-anim-strip)</p>
+      <div class="flex h-16 items-center justify-around">
+        <span class="mc-anim-music-notes [--mc-anim-zoom:2]"></span>
+        <span class="mc-anim-trial [--mc-anim-zoom:3]"></span>
+        <span class="mc-anim-locator-up [--mc-anim-zoom:3]"></span>
+        <span class="mc-anim-locator-down [--mc-anim-zoom:3]"></span>
+        <span class="mc-sprite" id="ping-anim" data-sprite="server-list-pinging-1" data-zoom="2"></span>
+      </div>
+      <p class="text-xs text-muted-foreground">Music notes, trial key, locator arrows, server ping.</p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Toasts (mc-anim-toast-in / -out)</p>
+      <div class="relative h-24 overflow-hidden mc-bg-list">
+        <div id="toast-demo" class="mc-toast mc-anim-toast-in absolute right-0 top-2 flex items-center gap-2 p-2"><span class="mc-sprite" data-sprite="item-diamond" aria-hidden="true"></span><div><p class="text-mc-yellow">Advancement Made!</p><p>Diamonds!</p></div></div>
+      </div>
+      <div class="flex gap-2">
+        <button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#toast-demo" data-anim="mc-anim-toast-in">Slide in</button>
+        <button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#toast-demo" data-anim="mc-anim-toast-out">Slide out</button>
+      </div>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Health (mc-anim-shake-row, mc-anim-blink)</p>
+      <div class="flex flex-col gap-2 py-2">
+        <div class="hud-row" data-kind="heart" data-n="3" data-anim="mc-anim-shake-row"></div>
+        <div class="hud-row" data-kind="food" data-n="2" data-anim="mc-anim-shake-row" style="align-self:flex-start"></div>
+        <div id="blink-row" class="hud-row" data-kind="heart" data-n="12"></div>
+      </div>
+      <div class="flex gap-2"><button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#blink-row" data-anim="mc-anim-blink">Take damage</button></div>
+      <p class="text-xs text-muted-foreground">Hearts and food jiggle when low; damage flashes the bar.</p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Items (mc-anim-bob, mc-anim-glint)</p>
+      <div class="flex h-24 items-end justify-around pb-2">
+        <span class="mc-sprite mc-anim-bob" data-sprite="item-diamond" data-zoom="2"></span>
+        <span class="mc-sprite mc-anim-glint" data-sprite="item-diamond-sword" data-zoom="2" data-glint="1"></span>
+        <span class="mc-sprite mc-anim-glint" data-sprite="item-enchanted-book" data-zoom="2" data-glint="1"></span>
+        <span class="mc-sprite mc-anim-glint mc-anim-bob" data-sprite="item-golden-apple" data-zoom="2" data-glint="1"></span>
+      </div>
+      <p class="text-xs text-muted-foreground">A dropped item floats; enchanted items shine.</p>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Progress (mc-anim-fill, -cook, -burn)</p>
+      <span id="fill-demo" class="mc-bar mc-anim-fill max-w-full" style="--mc-bar-value:0.8"></span>
+      <span id="fill-demo-2" class="mc-bar mc-anim-fill max-w-full [--mc-bar-bg:var(--mc-boss-bar-purple-background)] [--mc-bar-fill:var(--mc-boss-bar-purple-progress)]" style="--mc-bar-value:0.55"></span>
+      <div class="mc-panel-classic flex w-fit items-center gap-3 p-2">
+        <span class="mc-sprite mc-anim-burn" data-sprite="container-furnace-lit-progress" data-zoom="2" style="clip-path: inset(calc((1 - var(--mc-bar-value)) * 100%) 0 0 0)"></span>
+        <span class="mc-bar mc-anim-cook [--mc-bar-w:24] [--mc-bar-h:16] [--mc-bar-bg:none] [--mc-bar-fill:var(--mc-container-furnace-burn-progress)]"></span>
+      </div>
+      <div class="flex gap-2"><button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#fill-demo,#fill-demo-2" data-anim="mc-anim-fill">Refill</button></div>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Title, chat, item name</p>
+      <div class="relative flex h-32 flex-col items-center justify-center overflow-hidden mc-bg-stone mc-tile-dim">
+        <p id="title-demo" class="mc-anim-title text-3xl text-white">Welcome</p>
+        <p id="subtitle-demo" class="mc-anim-title text-mc-yellow">to the server</p>
+        <div id="chat-demo" class="absolute bottom-1 left-1 flex flex-col text-xs"></div>
+        <p id="itemname-demo" class="mc-anim-item-name absolute bottom-1 right-2 text-xs text-mc-aqua">Diamond Sword</p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#title-demo,#subtitle-demo" data-anim="mc-anim-title">/title</button>
+        <button id="chat-btn" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Chat</button>
+        <button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#itemname-demo" data-anim="mc-anim-item-name">Item name</button>
+      </div>
+    </div>
+
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <p class="font-medium text-mc-yellow">Loading, cursor, level up, obfuscated</p>
+      <div class="flex h-10 items-center justify-center"><span class="mc-anim-loading" role="img" aria-label="Loading"></span></div>
+      <span class="mc-text-field mc-anim-cursor px-1.5 py-1">/gamemode creative</span>
+      <div class="flex items-center gap-4">
+        <span id="level-demo" class="mc-anim-levelup inline-block text-2xl text-mc-xp">31</span>
+        <button class="replay mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" data-target="#level-demo" data-anim="mc-anim-levelup">Level up</button>
+      </div>
+      <p>§k text: <span class="obfuscated text-mc-light-purple">secret</span> <span class="obfuscated text-mc-gold">magic</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 9. LISTES ============================== -->
+<section id="listes" data-title="Game lists" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Game lists</h2>
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg">Servers</h3>
+      <div class="mc-bg-list flex max-h-[calc(150*var(--mc-px))] flex-col gap-1 overflow-y-auto p-2" id="servers"></div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg">Worlds</h3>
+      <div class="mc-bg-list flex flex-col gap-1 p-2" id="worlds"></div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg">Players (TAB)</h3>
+      <div class="mc-bg-menu flex flex-col p-1" id="players"></div>
+    </div>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-lg">Statistics</h3>
+      <div class="mc-panel-classic p-2">
+        <table class="w-full border-collapse text-left">
+          <thead><tr id="stat-head"></tr></thead>
+          <tbody id="stat-body"></tbody>
+        </table>
+      </div>
+      <h3 class="text-lg">Spectator</h3>
+      <div class="mc-bg-menu flex w-fit gap-1 p-1">
+        <span class="mc-sprite" data-sprite="spectator-teleport-to-player"></span>
+        <span class="mc-sprite" data-sprite="spectator-teleport-to-team"></span>
+        <span class="mc-sprite" data-sprite="spectator-scroll-left"></span>
+        <span class="mc-sprite" data-sprite="spectator-scroll-right"></span>
+        <span class="mc-sprite" data-sprite="spectator-close"></span>
+      </div>
+      <h3 class="text-lg">Scrollbar</h3>
+      <div class="flex gap-4">
+        <div class="mc-scroller-track relative h-[calc(60*var(--mc-px))] w-3"><div class="mc-scroller absolute inset-x-0 top-[calc(10*var(--mc-px))] h-[calc(20*var(--mc-px))]"></div></div>
+        <div class="mc-panel-inset h-[calc(60*var(--mc-px))] w-[calc(120*var(--mc-px))] overflow-y-scroll p-1 text-xs">Native scrollbars take the game's style automatically. Line 2. Line 3. Line 4. Line 5. Line 6. Line 7. Line 8. Line 9. Line 10.</div>
+        <span class="mc-sprite" data-sprite="container-creative-inventory-scroller"></span>
+        <span class="mc-sprite" data-sprite="container-villager-scroller"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 10. DASHBOARD ============================== -->
+<section id="dashboard" data-title="Dashboard patterns" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Dashboard patterns</h2>
+  <p class="text-muted-foreground">The Kaizen skin's patterns (stat cards, tables, badges, alerts, charts) rebuilt with the generic utilities.</p>
+  <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Players online</p><p class="text-4xl">128</p><p class="text-mc-green text-xs">▲ +12 since yesterday</p></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">TPS</p><p class="text-4xl">19.8</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-green-background)] [--mc-bar-fill:var(--mc-boss-bar-green-progress)]" style="--mc-bar-value:0.99"></span></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Memory</p><p class="text-4xl">6.2 GB</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-yellow-background)] [--mc-bar-fill:var(--mc-boss-bar-yellow-progress)]" style="--mc-bar-value:0.72"></span></div>
+    <div class="mc-panel flex flex-col gap-1 p-3"><p class="text-muted-foreground">Errors</p><p class="text-4xl text-destructive">3</p><span class="mc-bar w-full [--mc-bar-bg:var(--mc-boss-bar-red-background)] [--mc-bar-fill:var(--mc-boss-bar-red-progress)]" style="--mc-bar-value:0.15"></span></div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 xl:grid-cols-[2fr_1fr]">
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <div class="flex items-center justify-between"><h3 class="text-lg font-medium">Network servers</h3><button class="mc-button mc-tint-green outline-none hover:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">+ Add</button></div>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-left">
+          <thead><tr class="border-b"><th class="p-1 font-medium text-muted-foreground">Name</th><th class="p-1 font-medium text-muted-foreground">Status</th><th class="p-1 font-medium text-muted-foreground">Players</th><th class="p-1 font-medium text-muted-foreground">Ping</th></tr></thead>
+          <tbody>
+            <tr class="border-b hover:bg-accent"><td class="p-1">lobby-1</td><td class="p-1"><span class="bg-mc-dark-green px-1 text-white">ONLINE</span></td><td class="p-1">42 / 100</td><td class="p-1"><span class="mc-sprite" data-sprite="icon-ping-5"></span></td></tr>
+            <tr class="border-b hover:bg-accent"><td class="p-1">survival</td><td class="p-1"><span class="bg-mc-dark-green px-1 text-white">ONLINE</span></td><td class="p-1">71 / 150</td><td class="p-1"><span class="mc-sprite" data-sprite="icon-ping-4"></span></td></tr>
+            <tr class="border-b hover:bg-accent"><td class="p-1">skyblock</td><td class="p-1"><span class="bg-mc-gold px-1 text-black mc-text-shadow-none">MAINTENANCE</span></td><td class="p-1">0 / 80</td><td class="p-1"><span class="mc-sprite" data-sprite="icon-ping-2"></span></td></tr>
+            <tr class="hover:bg-accent"><td class="p-1">events</td><td class="p-1"><span class="bg-mc-dark-red px-1 text-white">OFFLINE</span></td><td class="p-1">—</td><td class="p-1"><span class="mc-sprite" data-sprite="icon-ping-unknown"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mc-panel-dark flex flex-col gap-2 p-3">
+      <h3 class="text-lg font-medium">Activity (chart-1..5)</h3>
+      <div class="flex h-[calc(60*var(--mc-px))] items-end gap-1" id="chart"></div>
+      <div class="flex flex-wrap gap-x-3 text-xs"><span class="text-chart-1">■ Survival</span><span class="text-chart-2">■ Skyblock</span><span class="text-chart-3">■ Lobby</span><span class="text-chart-4">■ Events</span><span class="text-chart-5">■ Errors</span></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="mc-panel-inset flex items-start gap-2 p-2"><span class="mc-sprite" data-sprite="icon-info" aria-hidden="true"></span><div><p class="text-mc-aqua">Info</p><p>Autosave every 10 minutes.</p></div></div>
+    <div class="mc-panel-inset flex items-start gap-2 p-2"><span class="mc-sprite" data-sprite="dialog-warning-button" aria-hidden="true"></span><div><p class="text-mc-gold">Caution</p><p>The "events" world was not saved.</p></div></div>
+    <div class="mc-panel-inset flex items-start gap-2 p-2"><span class="mc-sprite" data-sprite="world-list-error" aria-hidden="true" style="--mc-sprite-zoom:1"></span><div><p class="text-destructive">Error</p><p>Database connection lost.</p></div></div>
+    <div class="flex flex-wrap items-center gap-2"><span class="bg-primary px-1 text-primary-foreground">primary</span><span class="bg-secondary px-1 text-secondary-foreground">secondary</span><span class="bg-accent px-1 text-accent-foreground">accent</span><span class="bg-mc-dark-red px-1 text-white">destructive</span><span class="border px-1">outline</span><span class="bg-mc-dark-purple px-1 text-white">VIP</span><span class="bg-mc-gold px-1 text-black mc-text-shadow-none">LEGEND</span></div>
+    <div class="mc-panel-inset p-2"><pre class="whitespace-pre-wrap text-xs text-mc-text-field-text">{
+  <span class="text-mc-aqua">"motd"</span>: <span class="text-mc-green">"Welcome!"</span>,
+  <span class="text-mc-aqua">"max"</span>: <span class="text-mc-gold">150</span>
+}</pre></div>
+    <div class="mc-panel flex flex-col items-center gap-2 p-4 text-center"><span class="mc-sprite" data-sprite="item-barrier" data-zoom="2" aria-hidden="true"></span><p class="font-medium">No results</p><p class="text-muted-foreground">Empty state</p></div>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <h3 class="text-lg">Sidebar (sidebar tokens)</h3>
+    <div class="flex h-[calc(90*var(--mc-px))] overflow-hidden border border-sidebar-border">
+      <div class="flex w-[calc(80*var(--mc-px))] flex-col gap-0.5 bg-sidebar p-1 text-sidebar-foreground">
+        <span class="flex items-center gap-1.5 bg-sidebar-primary px-1.5 py-1 text-sidebar-primary-foreground"><span class="mc-sprite" data-sprite="item-compass-00"></span>Overview</span>
+        <span class="flex items-center gap-1.5 px-1.5 py-1 hover:bg-sidebar-accent"><span class="mc-sprite" data-sprite="item-filled-map"></span>Map</span>
+        <span class="flex items-center gap-1.5 px-1.5 py-1 hover:bg-sidebar-accent"><span class="mc-sprite" data-sprite="item-name-tag"></span>Players</span>
+        <span class="flex items-center gap-1.5 px-1.5 py-1 hover:bg-sidebar-accent"><span class="mc-sprite" data-sprite="item-writable-book"></span>Permissions</span>
+      </div>
+      <div class="flex-1 bg-background p-3"><p>Content</p><p class="text-muted-foreground">bg-sidebar, sidebar-primary, sidebar-accent, sidebar-border.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 11. TEXTURES ============================== -->
+<section id="textures" data-title="Textures & tints" class="flex flex-col gap-6">
+  <h2 class="text-3xl">Textures and tints</h2>
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+    <div class="mc-bg-dirt h-24 p-2">mc-bg-dirt</div>
+    <div class="mc-bg-stone h-24 p-2">mc-bg-stone</div>
+    <div class="mc-bg-planks h-24 p-2">mc-bg-planks</div>
+    <div class="mc-bg-deepslate h-24 p-2">mc-bg-deepslate</div>
+    <div class="mc-bg-stone mc-tile-bright h-24 p-2">tile-bright</div>
+    <div class="mc-bg-stone mc-tile-dim h-24 p-2">tile-dim</div>
+    <div class="mc-bg-stone mc-tile-dimmer h-24 p-2">tile-dimmer</div>
+    <div class="mc-bg-stone mc-tile-2x h-24 p-2">tile-2x</div>
+  </div>
+  <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+    <div class="mc-tile mc-tint-red h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">tint-red</div>
+    <div class="mc-tile mc-tint-green h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">tint-green</div>
+    <div class="mc-tile mc-tint-gold h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">tint-gold</div>
+    <div class="mc-tile mc-tint-blue h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">tint-blue</div>
+    <div class="mc-tile mc-tint-purple h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">tint-purple</div>
+    <div class="mc-tile h-20 p-2 [--mc-tile:var(--mc-block-white-wool)]">no tint</div>
+  </div>
+  <div class="flex items-center gap-3"><span>Custom tile shade and size:</span><div class="mc-tile h-12 w-32 [--mc-tile:var(--mc-block-diamond-ore)] [--mc-tile-shade:rgb(0_0_80/0.5)]"></div><div class="mc-tile h-12 w-32 [--mc-tile:var(--mc-block-gold-block)] [--mc-tile-size:calc(8*var(--mc-px))]"></div></div>
+  <div class="flex flex-col gap-2">
+    <h3 class="text-lg">Every block (mc-tile)</h3>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(calc(40*var(--mc-px)),1fr))] gap-1" id="blocks"></div>
+  </div>
+</section>
+
+<!-- ============================== 12. SPRITES ============================== -->
+<section id="sprites" data-title="Sprite library" class="flex flex-col gap-4">
+  <h2 class="text-3xl">Sprite library</h2>
+  <p class="text-muted-foreground">Every sprite of the theme. Click one to copy a ready-to-paste class.</p>
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="mc-text-field flex w-[calc(140*var(--mc-px))] items-center gap-1.5 px-1.5 py-1 focus-within:mc-text-field-highlighted"><span class="mc-sprite" data-sprite="icon-search" aria-hidden="true"></span><input id="sprite-q" class="min-w-0 flex-1 bg-transparent outline-none" placeholder="Search..."></span>
+    <div class="flex flex-wrap gap-1" id="sprite-families"></div>
+    <span class="text-muted-foreground" id="sprite-count"></span>
+  </div>
+  <div class="grid grid-cols-[repeat(auto-fill,minmax(calc(56*var(--mc-px)),1fr))] gap-1" id="sprite-grid"></div>
+</section>
+
+<!-- ============================== 13. UTILITAIRES ============================== -->
+<section id="utilitaires" data-title="Utility reference" class="flex flex-col gap-4">
+  <h2 class="text-3xl">Utility reference</h2>
+  <div class="mc-panel-dark overflow-x-auto p-3">
+    <table class="w-full border-collapse text-left">
+      <thead><tr class="border-b"><th class="p-1 font-medium text-muted-foreground">Class</th><th class="p-1 font-medium text-muted-foreground">Purpose</th></tr></thead>
+      <tbody id="utils"></tbody>
+    </table>
+  </div>
+</section>
+
+<footer class="py-6 text-center text-muted-foreground">
+  <div class="mc-separator-footer mb-4"></div>
+  CraftKit UI · unofficial theme, not associated with Mojang or Microsoft. Textures and font: Mojang assets extracted from your own Minecraft jar.
+</footer>
+  </main>
+</div>
+
+<!-- dialogue -->
+<div id="dialog" hidden class="fixed inset-0 z-40">
+  <div class="mc-overlay absolute inset-0" data-close></div>
+  <div role="dialog" aria-modal="true" aria-labelledby="dlg-title" class="mc-panel-dark mc-center w-full max-w-[calc(220*var(--mc-px))] p-4">
+    <div class="flex items-start justify-between gap-2">
+      <h3 id="dlg-title" class="text-lg font-medium">Delete this world?</h3>
+      <button class="mc-sprite outline-none focus-visible:mc-focus-ring" data-sprite="widget-cross-button" data-sprite-hover="widget-cross-button-highlighted" aria-label="Close" data-close></button>
+    </div>
+    <p class="mt-2">'New World' will be lost forever! (A long time!)</p>
+    <div class="mt-4 flex gap-2">
+      <button class="mc-button mc-tint-red outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex-1 pt-1 pb-1.5 text-xs" data-close>Delete</button>
+      <button class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted flex-1 pt-1 pb-1.5 text-xs" data-close>Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- pile de toasts + tooltip flottant -->
+<div id="toasts" class="pointer-events-none fixed right-2 top-[calc(30*var(--mc-px))] z-50 flex flex-col gap-1"></div>
+<div id="float-tip" hidden class="mc-tooltip pointer-events-none fixed z-50 p-1"></div>
+
+<script type="module" src="/demo/demo.js"></script>
+</body>
+</html>

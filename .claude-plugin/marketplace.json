@@ -1,0 +1,11 @@
+{
+  "name": "craftkit-ui",
+  "owner": { "name": "Timiliris" },
+  "plugins": [
+    {
+      "name": "craftkit-ui",
+      "source": "./plugin",
+      "description": "Minecraft GUI theme for the web: install it into a project and use its mc-* classes, sprites and animations."
+    }
+  ]
+}

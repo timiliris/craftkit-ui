@@ -1,0 +1,1551 @@
+/*
+ * VENDORED, do not edit here. Origin: the "minecraft-shadcn-theme" project (version 0.1.0),
+ * file src/styles/minecraft.css, copied verbatim below this comment. To update it, replace
+ * everything after this comment with the new upstream file, then run `pnpm build`.
+ * tools/web-skin/lib/compile.mjs adapts it in memory for the dashboard (token names, base rules,
+ * font files); README.md lists those adaptations. Nothing in this file is changed on disk.
+ */
+/*
+ * Minecraft GUI theme for shadcn/ui (Tailwind CSS v4). Unofficial fan theme, hand-written.
+ * Sprites come from ./minecraft-textures.css and ./minecraft-derived.css (generated), the font
+ * from ./minecraft-font.css (generated). Sprite sizes/borders: src/lib/minecraft-sprites.ts.
+ *
+ * ============================== REFERENCE (keep in sync with the code) ==============================
+ *
+ * GRID
+ *   --mc-scale   CSS pixels per texture ("GUI") pixel, integer, default 2.
+ *   --mc-px      1 GUI pixel as a length. It is computed where --mc-scale is DECLARED, so never set
+ *                --mc-scale alone: use mc-scale-N (any integer: mc-scale-1 .. mc-scale-4 ...), which
+ *                re-declares --mc-px and the base font size for its subtree. A text-* utility on the
+ *                same element still wins (mc-scale-3 text-2xl = 40px). Responsive use is fine
+ *                (mc-scale-2 lg:mc-scale-3). mc-scale-1 makes text 8px: decorative or HUD-like blocks
+ *                only, never content or controls; on small screens wrap or scroll instead.
+ *   Tailwind spacing follows the grid: 1 spacing unit = 2 GUI px (4px at scale 2), resolved at the use
+ *   site, so h-10 = 20 GUI px, p-0.5 = 1 GUI px, w-4.5 = 9 GUI px, and all of it scales with mc-scale-N.
+ *   In arbitrary values write calc(N * var(--mc-px)) or --spacing(N), e.g. h-[calc(13*var(--mc-px))];
+ *   a raw var(--spacing) is the :root value and does not follow mc-scale-N.
+ *   Line widths: the bare border, border-x/y/t/r/b/l, divide-x/y, ring and outline are 1 GUI px and
+ *   follow the scale. Everything with a number or "px" in its name is in CSS pixels (half a GUI pixel
+ *   at scale 2) and ignores the scale: border-2, ring-1, ring-3, outline-2, h-px, w-px, p-px ...
+ *   Write border-[calc(2*var(--mc-px))], h-0.5, w-0.5 instead, and mc-focus-ring instead of ring-N.
+ *   NO FRACTIONAL TRANSFORMS on anything textured or holding text: a transform that lands on half a
+ *   CSS pixel is resampled, the backdrop shows through nine-slice seams and the font smears.
+ *   "left-1/2 -translate-x-1/2" does exactly that on every box with an odd width or height (and
+ *   text-lg, text-xl and text-4xl lines are an odd number of CSS px high). Center with layout:
+ *   mc-center, flex/grid, or margin auto. If a translate is unavoidable, snap it:
+ *   [translate:round(-50%,var(--mc-px))_round(-50%,var(--mc-px))].
+ *
+ * TYPE
+ *   font-sans / font-heading / font-mono = "Minecraft" (400 and 700 only; 500 renders as 400, 600 as
+ *   700; no italic). font-enchant, font-illager = the two alternate scripts.
+ *   1em = 8 font pixels. Sizes are multiples of 8px so glyph pixels stay whole, and follow --mc-scale:
+ *     text-xs / text-sm / text-base   8px * scale        (16px)   line-height 9 / 11 / 13 font px
+ *     text-lg / text-xl               8px * (scale + 1)  (24px)   line-height 11 / 9 font px
+ *     text-2xl / text-3xl             8px * (scale + 2)  (32px)   line-height 11 / 9 font px
+ *     text-4xl 40px, 5xl 48px, 6xl 64px, 7xl 80px, 8xl 96px, 9xl 128px (at scale 2), line-height 9
+ *   xs/sm/base differ only by line-height: build hierarchy with color (text-muted-foreground, text-mc-*).
+ *   On light surfaces color is not enough (#404040 text, #505050 muted text): there font-medium is
+ *   bold (--font-weight-medium is 700 in mc-surface-light, 500 everywhere else), so a title written
+ *   "font-medium" is regular white over gray on dark surfaces and bold over regular on light ones.
+ *   Use font-medium for titles and group labels, font-bold for what must be bold everywhere.
+ *   Use leading-* in eighths (1.125, 1.375, 1.625) to keep lines on the font grid. tracking-* is 0 or
+ *   whole font pixels. Box shadows (shadow-2xs..2xl) and radii (rounded, rounded-<side>, rounded-xs..4xl,
+ *   all 0) are zeroed theme-wide; rounded-full and arbitrary values still work.
+ *   Text shadow: every element draws the game's shadow (1 font pixel down-right, text color x 0.25)
+ *   in the color held by --mc-shadow-color, which is inherited: "on" on the page and dark surfaces,
+ *   transparent on light surfaces.
+ *     mc-text-shadow        turn the shadow on for this subtree
+ *     mc-text-shadow-none   turn it off for this subtree (use it with text-transparent)
+ *   shadcn's "shimmer" utility is patched to turn the shadow off (it fills the glyphs with a background).
+ *
+ * COLORS (Tailwind colors: text-mc-gold, bg-mc-slot, border-mc-bevel-dark ...; also var(--color-mc-*))
+ *   chat: mc-black mc-dark-blue mc-dark-green mc-dark-aqua mc-dark-red mc-dark-purple mc-gold mc-gray
+ *         mc-dark-gray mc-blue mc-green mc-aqua mc-red mc-light-purple mc-yellow mc-white
+ *   gui:  mc-panel #C6C6C6, mc-slot #8B8B8B, mc-label #404040, mc-bevel-dark #373737, mc-bevel-light
+ *         #FFFFFF, mc-button-text, mc-button-text-disabled #A0A0A0, mc-text-field-text #E0E0E0,
+ *         mc-text-field-disabled #707070, mc-text-field-hint #808080, mc-tooltip #100010, mc-xp #80FF20,
+ *         mc-splash #FFFF00, mc-stone #6F6F6F, mc-popup #303030, mc-toast #212121
+ *   grass (--primary): mc-grass #3C8527, mc-grass-light #52A535 (bevel highlight), mc-grass-dark
+ *         #2A641C (hover), mc-grass-darker #1D4D13 (active)
+ *
+ * MODES AND SURFACES
+ *   :root = Classic (dimmed dirt page, light gray panels), .dark = Modern (dark menu page, dark popup
+ *   panels). The page is dark in both, so page-level tokens are light-on-dark. Tokens are re-declared
+ *   per surface; put one of these on every element that paints a surface (they also set color,
+ *   color-scheme and the text shadow), nested surfaces work:
+ *     mc-surface-light   tokens for the #C6C6C6 panel: #404040 text, no shadow, bold font-medium
+ *     mc-surface-dark    tokens for the #303030 popup and any dark fill: white text, shadow
+ *   Not restyled yet? An element with the plain class bg-card or bg-popover (and a styled sonner
+ *   toast; toast.custom() and unstyled toasts paint nothing and keep the page tokens) gets
+ *   the mode's surface set by itself: light in Classic, dark in Modern. That is a zero-specificity
+ *   fallback: it does not see variants or opacity modifiers (hover:bg-card, bg-card/50), any
+ *   mc-surface-* / mc-panel* on the element overrides it, and inside an explicit mc- surface it is off
+ *   (there --card and --popover are that surface's own color).
+ *   .dark carries the complete page-level set, so a .dark subtree works anywhere, even inside a light
+ *   panel; it sets the text color but paints nothing: give it bg-background or mc-page.
+ *   Every foreground/background pair of a set is at least 4.5:1, on the surface whose tokens are in
+ *   scope only. --primary is a fill color (white label, 4.6:1), not a text color (3.4:1 on the page,
+ *   2.7:1 on the light panel): use foreground plus an underline for links.
+ *   --destructive is a text color for the plain surface (--background, --muted) only: 4.5 to 6.2:1
+ *   there, but 3 to 4:1 on its own tint (bg-destructive/10, /20) and 2.6 to 3.8:1 on --accent (page and
+ *   dark surfaces). The stock destructive button and badge variants do exactly that: replace them with a
+ *   solid fill and a white label, "mc-button mc-tint-red" or "bg-mc-dark-red text-white" (7.7:1).
+ *   --muted is a darker recess on dark surfaces and a lighter area (#DEDEDE) on the light panel; for a
+ *   recessed well use mc-slot or mc-panel-inset. The sidebar tokens are dark in both modes.
+ *   --chart-1..5 are the bright chat colors on dark surfaces and dark ones on light surfaces (3:1 or
+ *   more against the surface and its --muted).
+ *   mc-page              the mode's page background (what <body> gets): tile + dim, 32 GUI px tiles.
+ *                        Hooks (inherited, set on :root/.dark): --mc-page-base, --mc-page-tile,
+ *                        --mc-page-shade, --mc-page-tile-px.
+ *
+ * NINE-SLICE UTILITIES (border-image). "border" = GUI px of layout the border takes on top/right/
+ * bottom/left; padding is yours to add. Remove bg-* (bg-clip-padding included: it would cut the edges
+ * off the stone widgets), border-*, rounded-* and shadow-* from the element: the sprite's center is
+ * painted over any background. The box must be at least "min" GUI px or the browser shrinks the
+ * corners. State utilities marked (state) only swap the sprite and do nothing alone: use them with a
+ * variant on top of their base (hover:mc-button-highlighted focus-visible:mc-button-highlighted
+ * disabled:mc-button-disabled). Every state comes after its base in the stylesheet, so
+ * "mc-button mc-button-highlighted" also works; between two states the variant decides (disabled: is
+ * emitted after hover: and focus-visible:, so a disabled button stays disabled).
+ * Focus: a control with a highlighted sprite shows focus through it, so "outline-none
+ * focus-visible:mc-*-highlighted" is the pattern (the states bring their own outline in forced-colors
+ * mode, and the variant makes it win over outline-none). A control without one takes
+ * "outline-none focus-visible:mc-focus-ring". Never leave a focusable element with outline-none alone.
+ * mc-slot, mc-tint* and mc-bar set position: relative; absolute, fixed and sticky still win.
+ *   mc-button                  stone button. border 3, min 6x6. White shadowed text. Game size 200x20.
+ *                              The game puts the 9 px text line 5 px from the top: pt-1 pb-1.5 around a
+ *                              text-xs line (centering a 9 px line in 20 px lands half a GUI px lower).
+ *                              Any width and height, odd ones included: the stone is tiled from the
+ *                              top-left corner exactly like the game (see mc-slice-tiled).
+ *   mc-button-highlighted      (state) white outline.
+ *   mc-button-disabled         (state) dark flat button, text #A0A0A0. Border stays 3.
+ *   mc-text-field              black field, #A0A0A0 outline. border 1. Text #E0E0E0, shadowed,
+ *                              placeholder #808080. Game size 200x20, text inset 3 GUI px more (px-1.5).
+ *   mc-text-field-highlighted  (state) white outline; on light surfaces it adds a 1 GUI px black
+ *                              outline outside the box (no layout shift), since white on #C6C6C6 is
+ *                              too faint. Use it with focus: (a text field shows focus on click too).
+ *   mc-slider-track            dark track. border 1. White shadowed text. Game size 200x20 (150x20 in
+ *                              options). Any size, tiled like the button.
+ *   mc-slider-track-highlighted (state) white outline.
+ *   mc-slider-handle           stone handle. border 2 2 3 2, min 4x5. Game size 8x20, as tall as the
+ *                              track (an absolute child starts inside the track's border: top -1 px).
+ *   mc-slider-handle-highlighted (state) white outline.
+ *   mc-tab                     unselected tab. border 6 2 3 2, min 4x9 (the top 4 px are the transparent
+ *                              gap that makes it sit lower than the selected tab). Game size 130x24.
+ *                              86% black: meant to sit on mc-bg-list or the page. White shadowed text.
+ *   mc-tab-highlighted, mc-tab-selected, mc-tab-selected-highlighted   (state) same borders; the
+ *                              selected sprites are an outline open at the bottom, transparent inside.
+ *                              A selected tab needs both hover: and focus-visible:
+ *                              mc-tab-selected-highlighted.
+ *   mc-panel                   the mode's surface: mc-panel-classic under :root, mc-panel-dark under .dark.
+ *   mc-panel-classic           light container panel + mc-surface-light. border 4 (1 outline, 2 bevel,
+ *                              1 corner), min 8x8. The game insets content 3-4 px more (p-1.5 / p-2).
+ *   mc-panel-dark              dark popup panel + mc-surface-dark. border 6, min 12x12.
+ *   mc-panel-inset             black well with a slot bevel + mc-surface-dark. border 1.
+ *   mc-tooltip                 purple tooltip, background and frame in one sprite (--mc-tooltip), no
+ *                              pseudo-element: overflow-hidden / overflow-auto on it are fine. border 2;
+ *                              the game pads 2 px more (p-1). Dark tokens, 94% opaque.
+ *   mc-toast                   advancement toast (#212121) + dark tokens. border 4, min 8x8. Game size
+ *                              160x32, icon at 8,8, text at x 30.
+ *   mc-toast-system            navy system toast + dark tokens. border 3 3 3 17 (the left border holds
+ *                              the "!" icon); min 21x34, set by the utility. Game text starts 4 px down
+ *                              and 1 px in (pt-2 pl-0.5).
+ *   mc-toast-tutorial          light toast (#DEDEDE) + light tokens. border 3, min 6x6.
+ *   mc-box-gold                advancement "obtained" box (#B98F2C). border 2, min 20x14. Game size
+ *                              200x20. Black unshadowed text (7.0:1). The game's white shadowed text is
+ *                              2.99:1 and fails AA at any size: "text-white mc-text-shadow" is for
+ *                              decoration only.
+ *   mc-box-blue                advancement "unobtained" box (it is blue). border 2, min 20x14. White
+ *                              shadowed text.
+ *   mc-box-dark                advancement title box (#212121). border 2, min 20x14. White shadowed text.
+ *   mc-slot                    inventory slot, #8B8B8B. border 1. Game size 18x18 (size-9), item 16x16.
+ *   mc-slot-highlight          (state, on mc-slot) the hover overlay: white 38% under the content and
+ *                              white 13% over it (::after), inside the bevel.
+ *   mc-scroller                scrollbar thumb. border 1. Game width 6 (w-3).
+ *   mc-scroller-track          scrollbar track (black). border 1.
+ *   mc-slice                   the mechanism itself, for any other sprite. Hooks (not inherited):
+ *                                --mc-slice-src             image, e.g. var(--mc-toast-now-playing)
+ *                                --mc-slice-t/-r/-b/-l      slice in texture px (default 0)
+ *                                --mc-bw-t/-r/-b/-l         layout border in GUI px (default: the slice)
+ *                                --mc-slice-outset          border-image-outset (default 0)
+ *                                --mc-slice-repeat          stretch (default) | repeat (centered
+ *                                                           tiling: half a texel off on odd sizes)
+ *                                --mc-slice-mask            mask image for mc-tint (default: the src)
+ *                              class="mc-slice [--mc-slice-src:var(--mc-toast-now-playing)]
+ *                                     [--mc-slice-t:4] [--mc-slice-r:4] [--mc-slice-b:4] [--mc-slice-l:4]"
+ *   mc-slice-tiled             mc-slice for OPAQUE sprites with a noisy texture, tiled from the top-left
+ *                              corner like the game (what mc-button, mc-slider-track and
+ *                              mc-slider-handle use). Extra hooks (not inherited):
+ *                                --mc-slice-src             var(--mc-widget-<name>-frame)
+ *                                --mc-slice-tiles           var(--mc-widget-<name>-tiles): five images,
+ *                                                           top/bottom/left/right edge strips + center
+ *                                --mc-slice-w, --mc-slice-h the sprite's size in texture px
+ *                              -frame and -tiles exist for widget/button, button_highlighted,
+ *                              button_disabled, slider, slider_highlighted, slider_handle and
+ *                              slider_handle_highlighted (scripts/build-derived-sprites.mjs).
+ *   Not provided: mc-effect (container/inventory/effect_background is not inlined as a variable).
+ *
+ * TEXTURES
+ *   mc-pixelated      image-rendering: pixelated on the element and everything inside it. Elsewhere
+ *                     only img[src*="/minecraft/"] and the mc- utilities are pixelated.
+ *   mc-tile           tiled texture background. Hooks (not inherited):
+ *                       --mc-tile        image:  class="mc-tile [--mc-tile:var(--mc-block-obsidian)]"
+ *                       --mc-tile-size   one tile, default calc(16 * var(--mc-px))
+ *                       --mc-tile-shade  color drawn over the tile, default transparent
+ *   mc-tile-dim       25% brightness (classic options background)     } modifiers for mc-tile and
+ *   mc-tile-dimmer    12.5% brightness (classic list background)      } mc-bg-*; they only set a hook
+ *   mc-tile-bright    no shade
+ *   mc-tile-2x        32 GUI px tiles, the size the game uses for screen backgrounds
+ *   mc-bg-dirt, mc-bg-stone, mc-bg-planks, mc-bg-deepslate   ready-made block tiles (mc-tile included)
+ *   mc-bg-menu, mc-bg-list   gui/menu_background (black 25%) and gui/menu_list_background (black 44%):
+ *                     flat translucent textures that darken whatever is behind them.
+ *   mc-sprite         inline-block showing one whole sprite. Hooks (not inherited): --mc-sprite (image;
+ *                     a comma list stacks sprites), --mc-sprite-w, --mc-sprite-h (texture px, default
+ *                     16), --mc-sprite-zoom (integer, default 1).
+ *                       class="mc-sprite [--mc-sprite:var(--mc-hud-heart-full)] [--mc-sprite-w:9] [--mc-sprite-h:9]"
+ *                     It has no text alternative: as an icon give it aria-hidden and put an aria-label
+ *                     on the control; as content give it role="img" and an aria-label.
+ *   mc-tint           multiplies the element's own background/border-image by --mc-tint (a color, not
+ *                     inherited), under its content. Uses ::before and isolation: isolate. Follows the
+ *                     shape of the nine-slice utilities (not in Firefox); on other elements it tints
+ *                     the whole box, so use it on opaque textures.
+ *                     NOT with overflow-hidden/auto/scroll/clip on the same element: overflow clips
+ *                     the tint at the padding box and the border stays untinted. Scroll or clip in an
+ *                     inner wrapper instead.
+ *   mc-tint-red, -green, -gold, -blue, -purple   mc-tint with a ready-made color.
+ *   mc-bar            a background/progress sprite pair, 182x5 by default, progress clipped to
+ *                     --mc-bar-value (0..1) on whole GUI pixels. Uses ::after. Hooks: --mc-bar-bg,
+ *                     --mc-bar-fill (default: the experience bar), --mc-bar-w, --mc-bar-h (texture px).
+ *                       class="mc-bar [--mc-bar-bg:var(--mc-boss-bar-pink-background)]
+ *                              [--mc-bar-fill:var(--mc-boss-bar-pink-progress)]" style={{ "--mc-bar-value": 0.4 }}
+ *                     Purely visual: put role="progressbar" and aria-value* on it.
+ *   mc-separator, mc-separator-footer   gui/header_separator and gui/footer_separator, 2 GUI px high.
+ *   mc-separator-vertical               the same two lines, 2 GUI px wide.
+ *
+ * MISC
+ *   mc-focus-ring     1 GUI px square outline in --ring (white on dark surfaces, black on light ones),
+ *                     no layout shift (focus-visible:mc-focus-ring).
+ *   mc-center         centers a position: fixed box in the viewport with auto margins instead of a
+ *                     transform (see GRID): replaces "top-1/2 left-1/2 -translate-x-1/2
+ *                     -translate-y-1/2" on dialogs. Sets inset 0, margin auto, fit-content size and
+ *                     100% max size; w-full, max-w-*, max-h-* and absolute still apply on top.
+ *   mc-splash         title-screen splash text: yellow, shadowed, rotated -20deg, pulsing.
+ *   mc-overlay        the in-game screen dim gradient, for dialog backdrops.
+ *
+ * BASE LAYER (nothing to add in components)
+ *   Native scrollbars are the game's scroller (6 GUI px, black track, #C0C0C0 thumb). ::selection is
+ *   white on #0000FF. Underlines use the font's own 1 px line. prefers-reduced-motion stops animations
+ *   and transitions.
+ *   Highlighted rows: --accent is under 2:1 against every surface (a hover tint, not an indicator), so
+ *   the highlighted item of a menu, select, combobox or command list also gets a 1 GUI px --ring line
+ *   inside its box. It is matched on what Radix, Base UI and cmdk render ([data-highlighted] on a
+ *   menuitem* in a role=menu or an option in a role=listbox, [cmdk-item][data-selected="true"]), so
+ *   items need no class; "outline-none!" on an item removes it. Group labels of those lists
+ *   (data-slot *-menu-label, menubar-label, select-label, combobox-label, [cmdk-group-heading]) take
+ *   font-medium's weight by themselves: bold on light surfaces.
+ *   In forced-colors mode sprites are dropped so that system text colors stay
+ *   readable: the nine-slice utilities keep a plain ButtonBorder border of the same width, the
+ *   highlighted states draw a 1 GUI px Highlight outline, selected tabs and highlighted slots a
+ *   Highlight border, the disabled button a GrayText border, and scrollbars use system colors.
+ *
+ * ====================================================================================================
+ */
+
+@import "./minecraft-textures.css";
+@import "./minecraft-derived.css";
+@import "./minecraft-font.css";
+
+/* ------------------------------------------------------------------------------------------------
+ * Hooks that must not leak into nested elements are registered as non-inherited. Where @property is
+ * unsupported they simply inherit, which only matters for nested uses of the same utility.
+ * ---------------------------------------------------------------------------------------------- */
+@property --mc-slice-src { syntax: "*"; inherits: false; }
+@property --mc-slice-t { syntax: "*"; inherits: false; }
+@property --mc-slice-r { syntax: "*"; inherits: false; }
+@property --mc-slice-b { syntax: "*"; inherits: false; }
+@property --mc-slice-l { syntax: "*"; inherits: false; }
+@property --mc-bw-t { syntax: "*"; inherits: false; }
+@property --mc-bw-r { syntax: "*"; inherits: false; }
+@property --mc-bw-b { syntax: "*"; inherits: false; }
+@property --mc-bw-l { syntax: "*"; inherits: false; }
+@property --mc-slice-outset { syntax: "*"; inherits: false; }
+@property --mc-slice-repeat { syntax: "*"; inherits: false; }
+@property --mc-slice-mask { syntax: "*"; inherits: false; }
+@property --mc-slice-tiles { syntax: "*"; inherits: false; }
+@property --mc-slice-w { syntax: "*"; inherits: false; }
+@property --mc-slice-h { syntax: "*"; inherits: false; }
+@property --mc-slice-cw { syntax: "*"; inherits: false; }
+@property --mc-slice-ch { syntax: "*"; inherits: false; }
+@property --mc-tile { syntax: "*"; inherits: false; }
+@property --mc-tile-size { syntax: "*"; inherits: false; }
+@property --mc-tile-shade { syntax: "*"; inherits: false; }
+@property --mc-sprite { syntax: "*"; inherits: false; }
+@property --mc-sprite-w { syntax: "*"; inherits: false; }
+@property --mc-sprite-h { syntax: "*"; inherits: false; }
+@property --mc-sprite-zoom { syntax: "*"; inherits: false; }
+@property --mc-tint { syntax: "*"; inherits: false; }
+
+/* ------------------------------------------------------------------------------------------------
+ * Theme
+ * ---------------------------------------------------------------------------------------------- */
+
+/* "static": every palette variable is emitted even when no utility uses it. */
+@theme static {
+  --color-mc-black: #000000;
+  --color-mc-dark-blue: #0000AA;
+  --color-mc-dark-green: #00AA00;
+  --color-mc-dark-aqua: #00AAAA;
+  --color-mc-dark-red: #AA0000;
+  --color-mc-dark-purple: #AA00AA;
+  --color-mc-gold: #FFAA00;
+  --color-mc-gray: #AAAAAA;
+  --color-mc-dark-gray: #555555;
+  --color-mc-blue: #5555FF;
+  --color-mc-green: #55FF55;
+  --color-mc-aqua: #55FFFF;
+  --color-mc-red: #FF5555;
+  --color-mc-light-purple: #FF55FF;
+  --color-mc-yellow: #FFFF55;
+  --color-mc-white: #FFFFFF;
+
+  --color-mc-panel: #C6C6C6;
+  --color-mc-slot: #8B8B8B;
+  --color-mc-label: #404040;
+  --color-mc-bevel-dark: #373737;
+  --color-mc-bevel-light: #FFFFFF;
+  --color-mc-button-text: #FFFFFF;
+  --color-mc-button-text-disabled: #A0A0A0;
+  --color-mc-text-field-text: #E0E0E0;
+  --color-mc-text-field-disabled: #707070;
+  --color-mc-text-field-hint: #808080;
+  --color-mc-tooltip: #100010;
+  --color-mc-xp: #80FF20;
+  --color-mc-splash: #FFFF00;
+  --color-mc-stone: #6F6F6F;
+  --color-mc-popup: #303030;
+  --color-mc-toast: #212121;
+
+  --color-mc-grass: #3C8527;
+  --color-mc-grass-light: #52A535;
+  --color-mc-grass-dark: #2A641C;
+  --color-mc-grass-darker: #1D4D13;
+}
+
+@theme {
+  /* The font has no kerning; spacing must be whole font pixels (1/8 em). */
+  --tracking-tighter: 0em;
+  --tracking-tight: 0em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.125em;
+  --tracking-wider: 0.125em;
+  --tracking-widest: 0.25em;
+
+  /* Nothing in the game is blurred. */
+  --shadow-2xs: 0 0 #0000;
+  --shadow-xs: 0 0 #0000;
+  --shadow-sm: 0 0 #0000;
+  --shadow-md: 0 0 #0000;
+  --shadow-lg: 0 0 #0000;
+  --shadow-xl: 0 0 #0000;
+  --shadow-2xl: 0 0 #0000;
+}
+
+/* "inline": utilities carry the value itself instead of a :root variable, so var(--foreground),
+   var(--mc-scale) and var(--mc-px) are resolved on the element that uses the utility. That is what
+   lets a surface or an mc-scale-N wrapper change them for its subtree. */
+@theme inline {
+  --font-sans: "Minecraft", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-heading: "Minecraft", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-mono: "Minecraft", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-enchant: "Minecraft Enchant", "Minecraft", ui-monospace, monospace;
+  --font-illager: "Minecraft Illager", "Minecraft", ui-monospace, monospace;
+
+  /* 2 GUI px, which is Tailwind's default 0.25rem at scale 2. */
+  --spacing: calc(2 * var(--mc-px));
+
+  /* The bare width utilities (border, border-t, divide-x, ring, outline) draw 1 GUI pixel. The
+     numbered ones (border-2, ring-3, outline-2) cannot be themed and stay in CSS pixels. */
+  --default-border-width: var(--mc-px);
+  --default-ring-width: var(--mc-px);
+  --default-outline-width: var(--mc-px);
+
+  /* Font sizes are 8px * integer so that one font pixel is a whole number of CSS pixels at every
+     scale. Line heights are whole font pixels and differ from the 9px glyph box by an even number,
+     so the half-leading is a whole GUI pixel too. */
+  --text-xs: calc(8px * var(--mc-scale));
+  --text-xs--line-height: 1.125;
+  --text-sm: calc(8px * var(--mc-scale));
+  --text-sm--line-height: 1.375;
+  --text-base: calc(8px * var(--mc-scale));
+  --text-base--line-height: 1.625;
+  --text-lg: calc(8px * (var(--mc-scale) + 1));
+  --text-lg--line-height: 1.375;
+  --text-xl: calc(8px * (var(--mc-scale) + 1));
+  --text-xl--line-height: 1.125;
+  --text-2xl: calc(8px * (var(--mc-scale) + 2));
+  --text-2xl--line-height: 1.375;
+  --text-3xl: calc(8px * (var(--mc-scale) + 2));
+  --text-3xl--line-height: 1.125;
+  --text-4xl: calc(8px * (var(--mc-scale) + 3));
+  --text-4xl--line-height: 1.125;
+  --text-5xl: calc(8px * (var(--mc-scale) + 4));
+  --text-5xl--line-height: 1.125;
+  --text-6xl: calc(8px * (var(--mc-scale) + 6));
+  --text-6xl--line-height: 1.125;
+  --text-7xl: calc(8px * (var(--mc-scale) + 8));
+  --text-7xl--line-height: 1.125;
+  --text-8xl: calc(8px * (var(--mc-scale) + 10));
+  --text-8xl--line-height: 1.125;
+  --text-9xl: calc(8px * (var(--mc-scale) + 14));
+  --text-9xl--line-height: 1.125;
+
+  /* The bare "rounded" and "rounded-<side>" read this key, not the named sizes below. */
+  --radius: 0px;
+  --radius-xs: var(--radius);
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
+  --radius-4xl: var(--radius);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Tokens. Both modes have a dark page, so the page-level set is light-on-dark; --card and --popover
+ * describe the mode's surface so that components not yet restyled stay coherent.
+ * In @layer base so that the surface utilities (utilities layer) always win over them.
+ * ---------------------------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --mc-scale: 2;
+    --mc-px: calc(1px * var(--mc-scale));
+
+    /* The game's shadow color: every channel of the text color x 0.25, alpha kept. */
+    --mc-text-shadow-on: color-mix(in srgb, currentColor 25%, black);
+
+    --radius: 0px;
+  }
+
+  /* The page-level set. It is declared on .dark too (the Modern overrides follow) so that a .dark
+     subtree gets a complete set wherever it is, even inside a light surface. The scale is not part
+     of it: a .dark inside an mc-scale-N wrapper must keep that scale. */
+  :root,
+  .dark {
+    --mc-shadow-color: var(--mc-text-shadow-on);
+    /* Extra outline of a highlighted text field; only light surfaces need one. */
+    --mc-focus-contrast: transparent;
+    /* What font-medium resolves to. The font has no 500 and draws it as 400, which is right wherever
+       a title is white against gray text; the light surface makes it 700 (see mc-surface-light). */
+    --font-weight-medium: 500;
+
+    /* Classic page: the dirt block at 25% brightness, 32 GUI px per tile like the old options screen. */
+    --mc-page-base: #221811;
+    --mc-page-tile: var(--mc-block-dirt);
+    --mc-page-shade: rgb(0 0 0 / 0.75);
+    --mc-page-tile-px: 32;
+
+    --background: #221811; /* average of the dimmed dirt; its brightest pixel is #2E2117 */
+    --foreground: #FFFFFF;
+    --card: #C6C6C6;
+    --card-foreground: #404040;
+    --popover: #C6C6C6;
+    --popover-foreground: #404040;
+    --primary: #3C8527;
+    --primary-foreground: #FFFFFF;
+    --secondary: #6F6F6F;
+    --secondary-foreground: #FFFFFF;
+    --muted: #110C08; /* dirt at 12.5%, the classic list background */
+    --muted-foreground: #AAAAAA;
+    --accent: #373737;
+    --accent-foreground: #FFFFFF;
+    --destructive: #FF5555;
+    --border: #555555;
+    --input: #A0A0A0;
+    --ring: #FFFFFF;
+    --chart-1: #55FF55;
+    --chart-2: #55FFFF;
+    --chart-3: #FFAA00;
+    --chart-4: #FF55FF;
+    --chart-5: #FF5555;
+    --sidebar: #110C08;
+    --sidebar-foreground: #FFFFFF;
+    --sidebar-primary: #3C8527;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #373737;
+    --sidebar-accent-foreground: #FFFFFF;
+    --sidebar-border: #555555;
+    --sidebar-ring: #FFFFFF;
+
+    color-scheme: dark;
+  }
+
+  .dark {
+    /* Modern page: gui/menu_background is a flat 25% black that the game draws over a blurred
+       panorama. There is no panorama here, so it sits on a dark base color instead. */
+    --mc-page-base: #2B2D33;
+    --mc-page-tile: var(--mc-gui-menu-background);
+    --mc-page-shade: transparent;
+
+    --background: #202226; /* --mc-page-base under 25% black */
+    --card: #303030;
+    --card-foreground: #FFFFFF;
+    --popover: #303030;
+    --popover-foreground: #FFFFFF;
+    --muted: #121315; /* the page under gui/menu_list_background (44% black) */
+    --sidebar: #121315;
+
+    /* On <html> this is what <body> sets anyway; on a nested .dark it completes the token switch. */
+    color: var(--foreground);
+  }
+
+  /* The game's shadow keeps the alpha of the text; color-mix cannot, relative colors can. */
+  @supports (color: rgb(from currentColor r g b)) {
+    :root {
+      --mc-text-shadow-on: rgb(from currentColor calc(r * 0.25) calc(g * 0.25) calc(b * 0.25) / alpha);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Base
+ * ---------------------------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    /* Declared on every element rather than inherited: the offset is 1 font pixel of the element's
+       own font size, and form controls reset text-shadow in the UA sheet. The color is the inherited
+       switch (see mc-text-shadow / mc-surface-*). */
+    text-shadow: 0.125em 0.125em 0 var(--mc-shadow-color);
+    /* The font's own underline: 1 font pixel thick. */
+    text-decoration-thickness: from-font;
+    /* image-rendering is inherited; reset it so that a textured ancestor never pixelates photos. */
+    image-rendering: auto;
+  }
+
+  /* Components that were not restyled paint the mode's surface with bg-card / bg-popover while
+     standing on the dark page, whose tokens they would inherit (light gray muted text and a text
+     shadow on a light panel). Give them the surface's own token set. Zero specificity, base layer:
+     any mc-surface-* / mc-panel* utility on the element wins. Inside an explicit mc- surface nothing
+     is done, because --card and --popover already match the tokens in scope there. Only the plain
+     classes are matched, not variants (hover:bg-card) or opacity modifiers (bg-card/50). */
+  /* Only styled sonner toasts paint --popover: toast.custom() and unstyled toasts have no background
+     and must keep the tokens of the page they float on. */
+  :where(.bg-card, .bg-popover, [data-sonner-toast][data-styled="true"]):not(
+      :where([class*="mc-surface-"], [class*="mc-panel"], [class*="mc-tooltip"], [class*="mc-toast"]) *
+    ) {
+    @apply mc-surface-light;
+  }
+  :where(.dark, .dark *):where(.bg-card, .bg-popover, [data-sonner-toast][data-styled="true"]):not(
+      :where([class*="mc-surface-"], [class*="mc-panel"], [class*="mc-tooltip"], [class*="mc-toast"]) *
+    ) {
+    @apply mc-surface-dark;
+  }
+
+  /* Group labels of menus and lists take the title weight of the surface they are on (see
+     --font-weight-medium in the surfaces): bold on the light panel, where their muted gray is only
+     1.3:1 away from the items. Zero specificity: any font-* utility on the label wins. */
+  :where(
+      [data-slot="dropdown-menu-label"],
+      [data-slot="context-menu-label"],
+      [data-slot="menubar-label"],
+      [data-slot="select-label"],
+      [data-slot="combobox-label"],
+      [cmdk-group-heading]
+    ) {
+    font-weight: var(--font-weight-medium);
+  }
+
+  html {
+    @apply font-sans;
+    font-synthesis: none;
+    font-kerning: none;
+    font-variant-ligatures: none;
+    letter-spacing: 0;
+    /* No effect on Windows, where the system rasterizer always filters; harmless elsewhere. */
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    text-rendering: optimizeSpeed;
+    text-underline-position: from-font;
+  }
+
+  body {
+    @apply mc-page;
+    color: var(--foreground);
+    font-size: calc(8px * var(--mc-scale));
+    line-height: 1.375;
+  }
+
+  /* The game highlights selected text field text in blue. */
+  ::selection {
+    background-color: #0000FF;
+    color: #FFFFFF;
+  }
+
+  img[src*="/minecraft/"] {
+    image-rendering: pixelated;
+  }
+
+  /* Native scrollbars as the game's scroller: 6 GUI px, black track, light gray thumb with a darker
+     right/bottom edge. Chromium ignores ::-webkit-scrollbar once scrollbar-color is set, so the
+     standard properties are only used where the pseudo-elements do not exist. */
+  @supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar {
+      width: calc(6 * var(--mc-px));
+      height: calc(6 * var(--mc-px));
+    }
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+      background-color: #000000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #C0C0C0;
+      box-shadow: inset calc(-1 * var(--mc-px)) calc(-1 * var(--mc-px)) 0 #808080;
+    }
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    * {
+      scrollbar-color: #C0C0C0 #000000;
+    }
+  }
+  /* Author background colors are all replaced by Canvas, which would hide the thumb in its track.
+     System colors are kept as written. */
+  @media (forced-colors: active) {
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+      background-color: Canvas;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: ButtonText;
+      box-shadow: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Scale and text
+ * ---------------------------------------------------------------------------------------------- */
+
+/* A custom property that contains var() is substituted where it is declared and inherited as the
+   result, so --mc-px (and the base font size) must be declared again wherever --mc-scale changes. */
+@utility mc-scale-* {
+  --mc-scale: --value(integer);
+  --mc-px: calc(1px * --value(integer));
+
+  /* Zero specificity: a text-* utility on the same element must win whatever the source order. */
+  :where(&) {
+    font-size: calc(8px * --value(integer));
+  }
+}
+
+@utility mc-text-shadow {
+  --mc-shadow-color: var(--mc-text-shadow-on);
+}
+
+@utility mc-text-shadow-none {
+  --mc-shadow-color: transparent;
+}
+
+/* shadcn's shimmer paints the text as a background clipped to the glyphs, with a transparent text
+   fill: a text shadow would be drawn over that fill instead of under it. Merged with shadcn's rule. */
+@utility shimmer {
+  --mc-shadow-color: transparent;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Surfaces: the whole token set, re-declared for a subtree.
+ * ---------------------------------------------------------------------------------------------- */
+@utility mc-surface-light {
+  --background: #C6C6C6;
+  --foreground: #404040;
+  --card: #C6C6C6;
+  --card-foreground: #404040;
+  --popover: #C6C6C6;
+  --popover-foreground: #404040;
+  --primary: #3C8527;
+  --primary-foreground: #FFFFFF;
+  --secondary: #6F6F6F;
+  --secondary-foreground: #FFFFFF;
+  --muted: #DEDEDE;
+  --muted-foreground: #505050;
+  --accent: #FFFFFF;
+  --accent-foreground: #404040;
+  --destructive: #AA0000;
+  --border: #8B8B8B;
+  --input: #373737;
+  --ring: #000000;
+  --chart-1: #0000AA;
+  --chart-2: #AA0000;
+  --chart-3: #AA00AA;
+  --chart-4: #006600; /* #00AA00 and #00AAAA are under 3:1 on the panel */
+  --chart-5: #006A6A;
+  --mc-shadow-color: transparent;
+  --mc-focus-contrast: #000000;
+  /* #404040 titles over #505050 descriptions are 1.3:1 apart and the muted gray cannot go lighter
+     (4.7:1 on the panel), so on this surface hierarchy comes from weight: font-medium is bold. */
+  --font-weight-medium: 700;
+  color: var(--foreground);
+  color-scheme: light;
+}
+
+@utility mc-surface-dark {
+  --background: #303030;
+  --foreground: #FFFFFF;
+  --card: #303030;
+  --card-foreground: #FFFFFF;
+  --popover: #303030;
+  --popover-foreground: #FFFFFF;
+  --primary: #3C8527;
+  --primary-foreground: #FFFFFF;
+  --secondary: #6F6F6F;
+  --secondary-foreground: #FFFFFF;
+  --muted: #212121;
+  --muted-foreground: #AAAAAA;
+  --accent: #555555;
+  --accent-foreground: #FFFFFF;
+  --destructive: #FF6666; /* #FF5555 is 4.2:1 on #303030 */
+  --border: #555555;
+  --input: #A0A0A0;
+  --ring: #FFFFFF;
+  --chart-1: #55FF55;
+  --chart-2: #55FFFF;
+  --chart-3: #FFAA00;
+  --chart-4: #FF55FF;
+  --chart-5: #FF5555;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  --mc-focus-contrast: transparent;
+  --font-weight-medium: 500;
+  color: var(--foreground);
+  color-scheme: dark;
+}
+
+/* The mode's page background, also applied to <body>. */
+@utility mc-page {
+  background-color: var(--mc-page-base);
+  background-image: linear-gradient(var(--mc-page-shade), var(--mc-page-shade)), var(--mc-page-tile);
+  background-size: calc(var(--mc-page-tile-px) * var(--mc-px)) calc(var(--mc-page-tile-px) * var(--mc-px));
+  background-repeat: repeat;
+  image-rendering: pixelated;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Nine-slice
+ *
+ * The game tiles the edges and the center of a nine-slice sprite from the top-left corner (unless the
+ * sprite sets stretch_inner, which stretches them). border-image cannot anchor a tiling there:
+ *   - "stretch" is exact whenever the stretched strips are flat along the stretch axis. That was
+ *     checked pixel by pixel for every sprite below that uses it.
+ *   - "repeat" keeps texels at their real size but centers the tiling: on a box with an odd number
+ *     of GUI pixels the texture sits half a texel off the grid. Only offered as a hook.
+ *   - "round" rescales tiles to fit, which breaks the pixel grid; never used.
+ * So the sprites with a noisy texture (stone button, slider, handle) go through mc-slice-tiled, which
+ * draws edges and center as top-left anchored backgrounds and leaves only the corners to border-image.
+ * ---------------------------------------------------------------------------------------------- */
+@utility mc-slice {
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: transparent;
+  border-width: calc(var(--mc-bw-t, var(--mc-slice-t, 0)) * var(--mc-px))
+    calc(var(--mc-bw-r, var(--mc-slice-r, 0)) * var(--mc-px))
+    calc(var(--mc-bw-b, var(--mc-slice-b, 0)) * var(--mc-px))
+    calc(var(--mc-bw-l, var(--mc-slice-l, 0)) * var(--mc-px));
+  border-image-source: var(--mc-slice-src, none);
+  border-image-slice: var(--mc-slice-t, 0) var(--mc-slice-r, 0) var(--mc-slice-b, 0) var(--mc-slice-l, 0) fill;
+  /* Independent of border-width, so a state can swap to a sprite with another border (the disabled
+     button) or the layout border can be thinner than the slice (system toast) without moving content. */
+  border-image-width: calc(var(--mc-slice-t, 0) * var(--mc-px)) calc(var(--mc-slice-r, 0) * var(--mc-px))
+    calc(var(--mc-slice-b, 0) * var(--mc-px)) calc(var(--mc-slice-l, 0) * var(--mc-px));
+  border-image-outset: var(--mc-slice-outset, 0);
+  border-image-repeat: var(--mc-slice-repeat, stretch);
+  /* A leftover background color must not show through the transparent corner pixels of the frame. */
+  background-clip: padding-box;
+  image-rendering: pixelated;
+
+  /* Keep a real border when the system replaces colors. */
+  @media (forced-colors: active) {
+    border-image-source: none;
+    border-color: ButtonBorder;
+  }
+}
+
+/* The game's own tiling, for opaque sprites. --mc-slice-tiles holds five images: the top, bottom,
+   left and right edge strips, then the center (scripts/build-derived-sprites.mjs cuts them out and
+   checks that these layers equal the game's nine-slice at any size). Each one repeats from the inner
+   top-left corner of the frame and runs under the corners, which is why the sprite must be opaque.
+   --mc-slice-src is then a corners-only image (border-image draws no edge when the source has
+   nothing between its slices), or the whole sprite when its edge strips are flat. No "fill": the
+   center is a background. */
+@utility mc-slice-tiled {
+  @apply mc-slice;
+  --mc-slice-cw: calc((var(--mc-slice-w, 0) - var(--mc-slice-l, 0) - var(--mc-slice-r, 0)) * var(--mc-px));
+  --mc-slice-ch: calc((var(--mc-slice-h, 0) - var(--mc-slice-t, 0) - var(--mc-slice-b, 0)) * var(--mc-px));
+  /* An opaque rectangle needs no mask, and a corners-only source would be the wrong one. */
+  --mc-slice-mask: none;
+  border-image-slice: var(--mc-slice-t, 0) var(--mc-slice-r, 0) var(--mc-slice-b, 0) var(--mc-slice-l, 0);
+  background-image: var(--mc-slice-tiles, none);
+  background-origin: border-box;
+  background-clip: border-box;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y, repeat;
+  background-position:
+    calc(var(--mc-slice-l, 0) * var(--mc-px)) 0,
+    calc(var(--mc-slice-l, 0) * var(--mc-px)) 100%,
+    0 calc(var(--mc-slice-t, 0) * var(--mc-px)),
+    100% calc(var(--mc-slice-t, 0) * var(--mc-px)),
+    calc(var(--mc-slice-l, 0) * var(--mc-px)) calc(var(--mc-slice-t, 0) * var(--mc-px));
+  background-size:
+    var(--mc-slice-cw) calc(var(--mc-slice-t, 0) * var(--mc-px)),
+    var(--mc-slice-cw) calc(var(--mc-slice-b, 0) * var(--mc-px)),
+    calc(var(--mc-slice-l, 0) * var(--mc-px)) var(--mc-slice-ch),
+    calc(var(--mc-slice-r, 0) * var(--mc-px)) var(--mc-slice-ch),
+    var(--mc-slice-cw) var(--mc-slice-ch);
+
+  /* Text takes a system color there; it must not end up on stone. */
+  @media (forced-colors: active) {
+    background-image: none;
+  }
+}
+
+/* widget/button 200x20, border 3: noisy stone, edges included. */
+@utility mc-button {
+  @apply mc-slice-tiled;
+  --mc-slice-src: var(--mc-widget-button-frame);
+  --mc-slice-tiles: var(--mc-widget-button-tiles);
+  --mc-slice-w: 200;
+  --mc-slice-h: 20;
+  --mc-slice-t: 3;
+  --mc-slice-r: 3;
+  --mc-slice-b: 3;
+  --mc-slice-l: 3;
+  --mc-bw-t: 3;
+  --mc-bw-r: 3;
+  --mc-bw-b: 3;
+  --mc-bw-l: 3;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: var(--color-mc-button-text);
+}
+
+@utility mc-button-highlighted {
+  --mc-slice-src: var(--mc-widget-button-highlighted-frame);
+  --mc-slice-tiles: var(--mc-widget-button-highlighted-tiles);
+
+  /* The sprite is gone in forced-colors mode (see mc-slice): the state needs a real outline. */
+  @media (forced-colors: active) {
+    outline: var(--mc-px) solid Highlight;
+    outline-offset: 0;
+  }
+}
+
+/* widget/button_disabled has border 1 and flat edges; only the slice changes, the layout border
+   stays 3. */
+@utility mc-button-disabled {
+  --mc-slice-src: var(--mc-widget-button-disabled-frame);
+  --mc-slice-tiles: var(--mc-widget-button-disabled-tiles);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+  color: var(--color-mc-button-text-disabled);
+
+  @media (forced-colors: active) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}
+
+/* widget/text_field 200x20, border 1: flat, stretch is exact. */
+@utility mc-text-field {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-widget-text-field);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: var(--color-mc-text-field-text);
+  caret-color: currentColor;
+
+  &::placeholder {
+    color: var(--color-mc-text-field-hint);
+    opacity: 1;
+  }
+}
+
+/* The sprite only turns the 1 px outline from #A0A0A0 to white, which is 1.7:1 against the light
+   panel. There the state adds a black line outside the white one (--mc-focus-contrast, set by the
+   surfaces); on dark surfaces the color is transparent and the field is the game's. */
+@utility mc-text-field-highlighted {
+  --mc-slice-src: var(--mc-widget-text-field-highlighted);
+  outline: var(--mc-px) solid var(--mc-focus-contrast, transparent);
+  outline-offset: 0;
+
+  @media (forced-colors: active) {
+    outline-color: Highlight;
+  }
+}
+
+/* widget/slider 200x20, border 1: flat outline, noisy center. */
+@utility mc-slider-track {
+  @apply mc-slice-tiled;
+  --mc-slice-src: var(--mc-widget-slider-frame);
+  --mc-slice-tiles: var(--mc-widget-slider-tiles);
+  --mc-slice-w: 200;
+  --mc-slice-h: 20;
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: var(--color-mc-button-text);
+}
+
+@utility mc-slider-track-highlighted {
+  --mc-slice-src: var(--mc-widget-slider-highlighted-frame);
+  --mc-slice-tiles: var(--mc-widget-slider-highlighted-tiles);
+
+  /* The sprite is gone in forced-colors mode (see mc-slice): the state needs a real outline. */
+  @media (forced-colors: active) {
+    outline: var(--mc-px) solid Highlight;
+    outline-offset: 0;
+  }
+}
+
+/* widget/slider_handle 8x20, border 2 2 3 2: noisy stone, edges included. */
+@utility mc-slider-handle {
+  @apply mc-slice-tiled;
+  --mc-slice-src: var(--mc-widget-slider-handle-frame);
+  --mc-slice-tiles: var(--mc-widget-slider-handle-tiles);
+  --mc-slice-w: 8;
+  --mc-slice-h: 20;
+  --mc-slice-t: 2;
+  --mc-slice-r: 2;
+  --mc-slice-b: 3;
+  --mc-slice-l: 2;
+}
+
+@utility mc-slider-handle-highlighted {
+  --mc-slice-src: var(--mc-widget-slider-handle-highlighted-frame);
+  --mc-slice-tiles: var(--mc-widget-slider-handle-highlighted-tiles);
+
+  /* The sprite is gone in forced-colors mode (see mc-slice): the state needs a real outline. */
+  @media (forced-colors: active) {
+    outline: var(--mc-px) solid Highlight;
+    outline-offset: 0;
+  }
+}
+
+/* widget/tab* 130x24. The .mcmeta border is 2 2 0 2, which leaves the outline, the highlight line
+   and the 4 transparent rows of the unselected tab in the tiled center: the game only ever draws tabs
+   24 px high. Slicing at 6 2 3 2 instead puts every non-flat row in a border, so all four sprites
+   are flat in their stretched parts and the tab can take any height. Same pixels at 130x24. */
+@utility mc-tab {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-widget-tab);
+  --mc-slice-t: 6;
+  --mc-slice-r: 2;
+  --mc-slice-b: 3;
+  --mc-slice-l: 2;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: var(--color-mc-button-text);
+}
+
+@utility mc-tab-highlighted {
+  --mc-slice-src: var(--mc-widget-tab-highlighted);
+
+  /* The sprite is gone in forced-colors mode (see mc-slice): the state needs a real outline. */
+  @media (forced-colors: active) {
+    outline: var(--mc-px) solid Highlight;
+    outline-offset: 0;
+  }
+}
+
+@utility mc-tab-selected {
+  --mc-slice-src: var(--mc-widget-tab-selected);
+
+  @media (forced-colors: active) {
+    border-color: Highlight;
+  }
+}
+
+@utility mc-tab-selected-highlighted {
+  --mc-slice-src: var(--mc-widget-tab-selected-highlighted);
+
+  @media (forced-colors: active) {
+    border-color: Highlight;
+    outline: var(--mc-px) solid Highlight;
+    outline-offset: 0;
+  }
+}
+
+/* Derived from gui/container/inventory.png, 12x12, border 4: flat. */
+@utility mc-panel-classic {
+  @apply mc-slice mc-surface-light;
+  --mc-slice-src: var(--mc-panel-classic);
+  --mc-slice-t: 4;
+  --mc-slice-r: 4;
+  --mc-slice-b: 4;
+  --mc-slice-l: 4;
+}
+
+/* popup/background 236x34, border 6: flat. */
+@utility mc-panel-dark {
+  @apply mc-slice mc-surface-dark;
+  --mc-slice-src: var(--mc-popup-background);
+  --mc-slice-t: 6;
+  --mc-slice-r: 6;
+  --mc-slice-b: 6;
+  --mc-slice-l: 6;
+}
+
+/* :where() keeps the specificity of a single class, so later utilities still override the dark half. */
+@utility mc-panel {
+  @apply mc-panel-classic;
+
+  &:where(.dark, .dark *) {
+    @apply mc-surface-dark;
+    --mc-slice-src: var(--mc-popup-background);
+    --mc-slice-t: 6;
+    --mc-slice-r: 6;
+    --mc-slice-b: 6;
+    --mc-slice-l: 6;
+  }
+}
+
+/* Derived from the player box of gui/container/inventory.png, 6x6, border 1: flat, black center. */
+@utility mc-panel-inset {
+  @apply mc-slice mc-surface-dark;
+  --mc-slice-src: var(--mc-panel-classic-inset);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+  --background: #000000;
+  --card: #000000;
+  --popover: #000000;
+}
+
+/* --mc-tooltip is tooltip/frame composited over tooltip/background by build-derived-sprites.mjs
+   (both 100x100; the background is flat past its corners and the frame sets stretch_inner, so one
+   stretched nine-slice at the frame's border of 10 equals the game's two draws). One border-image and
+   no pseudo-element: the frame survives overflow: hidden and mc-tint tints it too.
+   The sprite starts with 8 fully transparent pixels: the outset pushes those outside the box, so the
+   box is exactly the visible tooltip (1 px outline in the background color with cut corners, then the
+   1 px frame line). */
+@utility mc-tooltip {
+  @apply mc-slice mc-surface-dark;
+  --mc-slice-src: var(--mc-tooltip);
+  --mc-slice-t: 10;
+  --mc-slice-r: 10;
+  --mc-slice-b: 10;
+  --mc-slice-l: 10;
+  --mc-bw-t: 2;
+  --mc-bw-r: 2;
+  --mc-bw-b: 2;
+  --mc-bw-l: 2;
+  --mc-slice-outset: calc(8 * var(--mc-px));
+  --background: #100010;
+  --card: #100010;
+  --popover: #100010;
+  --muted: #28003C;
+  --accent: #28007F;
+  --border: #28007F;
+}
+
+/* toast/advancement 160x32 has no nine-slice .mcmeta (the game only draws it at 160x32). Its pixels
+   are a 4 px frame (rounded black outline + #555555 band) around a flat #212121 center, with every
+   edge strip flat along its axis, so slicing it at 4 and stretching is lossless at any size. */
+@utility mc-toast {
+  @apply mc-slice mc-surface-dark;
+  --mc-slice-src: var(--mc-toast-advancement);
+  --mc-slice-t: 4;
+  --mc-slice-r: 4;
+  --mc-slice-b: 4;
+  --mc-slice-l: 4;
+  --background: #212121;
+  --card: #212121;
+  --popover: #212121;
+  --muted: #303030;
+}
+
+/* toast/system 160x64, border 30 4 4 17: the top-left corner slice holds the "!" icon. The layout
+   border is only the visible 3 px frame (17 on the icon side) so text can sit beside the icon as in
+   the game. Below 34 px of height the browser would shrink the slices, hence the minimum. Flat. */
+@utility mc-toast-system {
+  @apply mc-slice mc-surface-dark;
+  --mc-slice-src: var(--mc-toast-system);
+  --mc-slice-t: 30;
+  --mc-slice-r: 4;
+  --mc-slice-b: 4;
+  --mc-slice-l: 17;
+  --mc-bw-t: 3;
+  --mc-bw-r: 3;
+  --mc-bw-b: 3;
+  --mc-bw-l: 17;
+  --background: #082C4C;
+  --card: #082C4C;
+  --popover: #082C4C;
+  --muted: #06213A;
+  --accent: #286485;
+  --border: #286485;
+  min-height: calc(34 * var(--mc-px));
+  min-width: calc(21 * var(--mc-px));
+}
+
+/* toast/tutorial 160x32, border 3: flat, light. */
+@utility mc-toast-tutorial {
+  @apply mc-slice mc-surface-light;
+  --mc-slice-src: var(--mc-toast-tutorial);
+  --mc-slice-t: 3;
+  --mc-slice-r: 3;
+  --mc-slice-b: 3;
+  --mc-slice-l: 3;
+  --background: #DEDEDE;
+  --card: #DEDEDE;
+  --popover: #DEDEDE;
+  --muted: #C6C6C6;
+  --border: #AAAAAA;
+}
+
+/* advancements/box_* and title_box 200x26, border 10: flat. The sprites have 3 transparent rows above
+   and below, pushed outside the box by the outset; what is left is a 2 px frame on every side. */
+@utility mc-box-gold {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-advancements-box-obtained);
+  --mc-slice-t: 10;
+  --mc-slice-r: 10;
+  --mc-slice-b: 10;
+  --mc-slice-l: 10;
+  --mc-bw-t: 2;
+  --mc-bw-r: 2;
+  --mc-bw-b: 2;
+  --mc-bw-l: 2;
+  --mc-slice-outset: calc(3 * var(--mc-px)) 0;
+  /* The game writes white on this gold (#B98F2C), which is 2.99:1. Black is 7.0:1. */
+  --mc-shadow-color: transparent;
+  color: #000000;
+}
+
+@utility mc-box-blue {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-advancements-box-unobtained);
+  --mc-slice-t: 10;
+  --mc-slice-r: 10;
+  --mc-slice-b: 10;
+  --mc-slice-l: 10;
+  --mc-bw-t: 2;
+  --mc-bw-r: 2;
+  --mc-bw-b: 2;
+  --mc-bw-l: 2;
+  --mc-slice-outset: calc(3 * var(--mc-px)) 0;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: #FFFFFF;
+}
+
+@utility mc-box-dark {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-advancements-title-box);
+  --mc-slice-t: 10;
+  --mc-slice-r: 10;
+  --mc-slice-b: 10;
+  --mc-slice-l: 10;
+  --mc-bw-t: 2;
+  --mc-bw-r: 2;
+  --mc-bw-b: 2;
+  --mc-bw-l: 2;
+  --mc-slice-outset: calc(3 * var(--mc-px)) 0;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: #FFFFFF;
+}
+
+/* container/slot 18x18 is not nine-slice in its .mcmeta, but it is a 1 px bevel (dark top/left, white
+   bottom/right, #8B8B8B in the two other corners) around a flat #8B8B8B center: border 1, stretch,
+   lossless. The center is a background color instead of the slice's "fill" so that mc-slot-highlight
+   can draw between it and the content. */
+@utility mc-slot {
+  @apply mc-slice;
+  position: relative;
+  --mc-slice-src: var(--mc-container-slot);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+  border-image-slice: 1;
+  background-color: var(--color-mc-slot);
+}
+
+/* container/slot_highlight_back (white 38%) is drawn under the item and slot_highlight_front (white
+   13%) over it. Both are 24x24 with a 4 px transparent margin around a flat 16x16 square that covers
+   the inside of the slot, so each is scaled to 150% of the padding box and centered. */
+@utility mc-slot-highlight {
+  background-image: var(--mc-container-slot-highlight-back);
+  background-size: 150% 150%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-origin: padding-box;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: var(--mc-container-slot-highlight-front) center / 150% 150% no-repeat;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
+  @media (forced-colors: active) {
+    border-color: Highlight;
+  }
+}
+
+/* widget/scroller and widget/scroller_background 6x32, border 1: flat. */
+@utility mc-scroller {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-widget-scroller);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+}
+
+@utility mc-scroller-track {
+  @apply mc-slice;
+  --mc-slice-src: var(--mc-widget-scroller-background);
+  --mc-slice-t: 1;
+  --mc-slice-r: 1;
+  --mc-slice-b: 1;
+  --mc-slice-l: 1;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Textures
+ * ---------------------------------------------------------------------------------------------- */
+@utility mc-pixelated {
+  image-rendering: pixelated;
+
+  /* The base layer resets image-rendering on every element, so it has to be passed down explicitly. */
+  & * {
+    image-rendering: pixelated;
+  }
+}
+
+/* The shade is a flat color over the tile: black at 75% leaves exactly 25% of every channel, which is
+   how the game dims the options background, and it also works on translucent textures. */
+@utility mc-tile {
+  background-image: linear-gradient(var(--mc-tile-shade, transparent), var(--mc-tile-shade, transparent)),
+    var(--mc-tile, none);
+  background-size: var(--mc-tile-size, calc(16 * var(--mc-px))) var(--mc-tile-size, calc(16 * var(--mc-px)));
+  background-repeat: repeat;
+  image-rendering: pixelated;
+}
+
+@utility mc-tile-dim {
+  --mc-tile-shade: rgb(0 0 0 / 0.75);
+}
+
+@utility mc-tile-dimmer {
+  --mc-tile-shade: rgb(0 0 0 / 0.875);
+}
+
+@utility mc-tile-bright {
+  --mc-tile-shade: transparent;
+}
+
+@utility mc-tile-2x {
+  --mc-tile-size: calc(32 * var(--mc-px));
+}
+
+@utility mc-bg-dirt {
+  @apply mc-tile;
+  --mc-tile: var(--mc-block-dirt);
+}
+
+@utility mc-bg-stone {
+  @apply mc-tile;
+  --mc-tile: var(--mc-block-stone);
+}
+
+@utility mc-bg-planks {
+  @apply mc-tile;
+  --mc-tile: var(--mc-block-oak-planks);
+}
+
+@utility mc-bg-deepslate {
+  @apply mc-tile;
+  --mc-tile: var(--mc-block-deepslate);
+}
+
+@utility mc-bg-menu {
+  @apply mc-tile;
+  --mc-tile: var(--mc-gui-menu-background);
+}
+
+@utility mc-bg-list {
+  @apply mc-tile;
+  --mc-tile: var(--mc-gui-menu-list-background);
+}
+
+@utility mc-sprite {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--mc-sprite-w, 16) * var(--mc-sprite-zoom, 1) * var(--mc-px));
+  height: calc(var(--mc-sprite-h, 16) * var(--mc-sprite-zoom, 1) * var(--mc-px));
+  background-image: var(--mc-sprite, none);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+/* The game tints a texture by multiplying it with a color. ::before covers the border box (absolute
+   insets start at the padding box, hence the negative insets), sits at z-index -1 inside the
+   element's own stacking context (above its background and border-image, below its content) and is
+   masked by the same nine-slice so transparent corner pixels stay transparent.
+   Overflow clips at the padding box: with an overflow other than visible on the element, the border
+   keeps its own colors. A pseudo-element cannot escape that.
+   The hooks are not inherited, so the pseudo-element asks for them explicitly. */
+@utility mc-tint {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    --mc-tint: inherit;
+    --mc-slice-src: inherit;
+    --mc-slice-t: inherit;
+    --mc-slice-r: inherit;
+    --mc-slice-b: inherit;
+    --mc-slice-l: inherit;
+    --mc-bw-t: inherit;
+    --mc-bw-r: inherit;
+    --mc-bw-b: inherit;
+    --mc-bw-l: inherit;
+    --mc-slice-outset: inherit;
+    --mc-slice-repeat: inherit;
+    --mc-slice-mask: inherit;
+    content: "";
+    position: absolute;
+    inset: calc(var(--mc-bw-t, var(--mc-slice-t, 0)) * -1 * var(--mc-px))
+      calc(var(--mc-bw-r, var(--mc-slice-r, 0)) * -1 * var(--mc-px))
+      calc(var(--mc-bw-b, var(--mc-slice-b, 0)) * -1 * var(--mc-px))
+      calc(var(--mc-bw-l, var(--mc-slice-l, 0)) * -1 * var(--mc-px));
+    z-index: -1;
+    background-color: var(--mc-tint, transparent);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    image-rendering: pixelated;
+    /* Not in Firefox, where the tint also fills transparent corner pixels. */
+    -webkit-mask-box-image-source: var(--mc-slice-mask, var(--mc-slice-src, none));
+    -webkit-mask-box-image-slice: var(--mc-slice-t, 0) var(--mc-slice-r, 0) var(--mc-slice-b, 0) var(--mc-slice-l, 0) fill;
+    -webkit-mask-box-image-width: calc(var(--mc-slice-t, 0) * var(--mc-px)) calc(var(--mc-slice-r, 0) * var(--mc-px))
+      calc(var(--mc-slice-b, 0) * var(--mc-px)) calc(var(--mc-slice-l, 0) * var(--mc-px));
+    -webkit-mask-box-image-outset: var(--mc-slice-outset, 0);
+    -webkit-mask-box-image-repeat: var(--mc-slice-repeat, stretch);
+
+    /* Its background would become an opaque system color. */
+    @media (forced-colors: active) {
+      display: none;
+    }
+  }
+}
+
+/* Multiplying can only darken and the stone is mid-gray, so the tints are the bright chat colors:
+   the result reads as dyed stone, and the white label only gains contrast (5.5:1 or more). */
+@utility mc-tint-red {
+  @apply mc-tint;
+  --mc-tint: #FF5555;
+}
+
+@utility mc-tint-green {
+  @apply mc-tint;
+  --mc-tint: #55FF55;
+}
+
+@utility mc-tint-gold {
+  @apply mc-tint;
+  --mc-tint: #FFAA00;
+}
+
+@utility mc-tint-blue {
+  @apply mc-tint;
+  --mc-tint: #5555FF;
+}
+
+@utility mc-tint-purple {
+  @apply mc-tint;
+  --mc-tint: #FF55FF;
+}
+
+/* A bar is two sprites of the same size; the game draws the first N columns of the progress sprite.
+   round() keeps the cut on a whole GUI pixel. */
+@utility mc-bar {
+  position: relative;
+  display: block;
+  flex: none;
+  width: calc(var(--mc-bar-w, 182) * var(--mc-px));
+  height: calc(var(--mc-bar-h, 5) * var(--mc-px));
+  background-image: var(--mc-bar-bg, var(--mc-hud-experience-bar-background));
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--mc-bar-fill, var(--mc-hud-experience-bar-progress));
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    clip-path: inset(0 calc(100% - round(down, var(--mc-bar-value, 0) * 100%, var(--mc-px))) 0 0);
+  }
+}
+
+/* gui/header_separator and gui/footer_separator are 32x2: a 20% white row and a 75% black row. */
+@utility mc-separator {
+  display: block;
+  flex: none;
+  height: calc(2 * var(--mc-px));
+  border: 0;
+  background-color: transparent;
+  background-image: var(--mc-gui-header-separator);
+  background-size: calc(32 * var(--mc-px)) calc(2 * var(--mc-px));
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
+}
+
+@utility mc-separator-footer {
+  display: block;
+  flex: none;
+  height: calc(2 * var(--mc-px));
+  border: 0;
+  background-color: transparent;
+  background-image: var(--mc-gui-footer-separator);
+  background-size: calc(32 * var(--mc-px)) calc(2 * var(--mc-px));
+  background-repeat: repeat-x;
+  image-rendering: pixelated;
+}
+
+/* A background image cannot be rotated, so the vertical rule repeats the sprite's two colors. */
+@utility mc-separator-vertical {
+  display: block;
+  flex: none;
+  width: calc(2 * var(--mc-px));
+  border: 0;
+  background-color: transparent;
+  background-image: linear-gradient(to right, rgb(255 255 255 / 0.2) 50%, rgb(0 0 0 / 0.75) 50%);
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * Misc
+ * ---------------------------------------------------------------------------------------------- */
+@utility mc-focus-ring {
+  outline: var(--mc-px) solid var(--ring);
+  outline-offset: 0;
+}
+
+/* The highlighted row of a menu, select, combobox or command list is where the keyboard is, and
+   --accent alone is under 2:1 against every surface (white on #C6C6C6, #555555 on #303030; no fill
+   can reach 3:1 and keep the row's text readable). Like the game's selected list entry, the row
+   also gets a 1 GUI px line in --ring, drawn inside it so that a scrolling popup never clips it.
+   Matched on the roles and state attributes Radix, Base UI and cmdk set, not on classes, and in the
+   utilities layer with enough specificity to beat the items' own outline-hidden. Menubar triggers
+   (role menuitem in a menubar, not in a menu) keep their focus ring. */
+@layer utilities {
+  [role="menu"] :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"])[data-highlighted],
+  [role="listbox"] [role="option"][data-highlighted],
+  [cmdk-item][data-selected="true"] {
+    outline: var(--mc-px) solid var(--ring);
+    outline-offset: calc(-1 * var(--mc-px));
+
+    @media (forced-colors: active) {
+      outline-color: Highlight;
+    }
+  }
+}
+
+/* Centers a fixed box in the viewport without a transform. "left-1/2 -translate-x-1/2" moves a box
+   with an odd width by half a CSS pixel, and a fractional transform is resampled: nine-slice seams
+   let the backdrop through and the pixel font smears. Auto margins are layout, which snaps to whole
+   pixels. w-full plus a max-width still works: the auto margins center whatever width results. */
+@utility mc-center {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: fit-content;
+  height: fit-content;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* The title screen scales the splash by 1.8 - |sin(t * 2pi)| * 0.1 with t in seconds: two pulses per
+   second, a cusp at full size and a smooth turn at the small end. */
+@utility mc-splash {
+  display: inline-block;
+  --mc-shadow-color: var(--mc-text-shadow-on);
+  color: var(--color-mc-splash);
+  white-space: nowrap;
+  rotate: -20deg;
+  animation: mc-splash 0.5s infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes mc-splash {
+  0%,
+  100% {
+    scale: 1;
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  50% {
+    scale: 0.9444;
+    animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  }
+}
+
+@utility mc-overlay {
+  background-image: linear-gradient(rgb(16 16 16 / 0.75), rgb(16 16 16 / 0.82));
+}
