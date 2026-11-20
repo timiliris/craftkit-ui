@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-pt-20 lg:scroll-pt-24">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
 <body class="mc-page min-h-screen text-foreground">
 
 <!-- ============================== BARRE DU HAUT ============================== -->
-<header class="mc-bg-list sticky top-0 z-30">
+<header class="mc-bg-list sticky top-0 z-30 bg-[#000]">
   <div class="flex items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4">
     <span class="mc-sprite sm:hidden" data-sprite="block-grass-block-side-tinted" aria-hidden="true"></span>
     <span class="mc-sprite hidden sm:inline-block" data-sprite="block-grass-block-side-tinted" data-zoom="2" aria-hidden="true"></span>
@@ -27,7 +27,7 @@
   </div>
   <div class="mc-separator"></div>
   <!-- mobile menu: settings + sections -->
-  <div id="menu" hidden class="mc-bg-menu max-h-[calc(100dvh-24*var(--mc-px))] overflow-y-auto overscroll-contain lg:hidden">
+  <div id="menu" hidden class="mc-bg-menu bg-[#000] max-h-[calc(100dvh-24*var(--mc-px))] overflow-y-auto overscroll-contain lg:hidden">
     <div class="flex flex-wrap gap-2 p-3">
       <button data-action="mode" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs">Mode: Classic</button>
       <button data-action="lang" class="mc-button outline-none hover:mc-button-highlighted focus-visible:mc-button-highlighted px-3 pt-1 pb-1.5 text-xs" aria-label="Language / Langue">EN | FR</button>
